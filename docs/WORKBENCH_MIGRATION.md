@@ -14,12 +14,19 @@
 
 安装 Python 3.11+、Node.js、Git（需要继续开发时）及紫鸟客户端。克隆完整仓库后保持目录结构，数据包恢复到仓库根目录，而不是主工作台子目录。
 
+```powershell
+git clone https://github.com/zeng4368-netizen/ai-ecommerce-workbench.git
+cd ai-ecommerce-workbench
+```
+
+私有仓库需要登录有权限的 GitHub 账号。若不安装 Git，也可先下载源码 ZIP，但继续开发时建议使用克隆。
+
 在仓库根目录执行：
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r frontend/unified_skill_dashboard/requirements.txt
-.\.venv\Scripts\python.exe -m pip install pytest httpx
+.\.venv\Scripts\python.exe -m pip install pytest httpx cryptography
 ```
 
 将工作台 `.env` 恢复到 `frontend/unified_skill_dashboard/.env`；没有备份时复制该目录的 `.env.example` 并填写自己的配置。根目录 `.env` 不等同于工作台 `.env`。不要把填好的文件提交到 Git。
@@ -72,4 +79,8 @@ ziniao-cli doctor
 - 不把新电脑的空数据库覆盖到原始备份，不自动激活待审核任务。
 - 如果更换数据盘或根目录，核查 `WORKBENCH_DATA_DIR` 和导出路径配置；旧设备的绝对下载路径不可直接沿用。
 
-完整恢复验收仍须在新电脑实际执行；源码上传成功不等于跨电脑运行已验证。
+本机已在独立临时目录恢复业务快照，通过健康、工作台数据与采集状态接口检查；恢复记录包含 94 项行动、18 个聊天记录、1 个内容项目、3 个数据版本与 11 条采集记录。测试未恢复真实凭据、未启动调度器。
+
+两份 `reports/ecommerce_report_20260605_150838_8363324d_*` 早期 Excel 报告存在原有内部损坏，已原样保存；详见 Release 的 verification-report.json。这不影响迁移 ZIP 的 SHA256 校验，但不能声称这些旧表可正常打开或其不可读部分已完成内容扫描。
+
+完整恢复验收仍须在新电脑实际执行，尤其是紫鸟设备绑定与下载路径；本机临时恢复不等于跨电脑授权已验证。

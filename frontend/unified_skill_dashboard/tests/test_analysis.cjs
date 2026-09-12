@@ -1,0 +1,38 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const A=require('../assets/analysis.js');
+const scope={window:{}};
+vm.runInNewContext(fs.readFileSync(path.join(root,'assets/snapshot.js'),'utf8'),scope);
+const d=scope.window.WORKBENCH_DATA;
+const s=A.adSummary(A.ads(d.gmv.rows));
+assert.equal(s.revenue,d.gmv.rows.reduce((a,r)=>a+Number(r['总收入']),0));
+assert.equal(s.spend,d.gmv.rows.reduce((a,r)=>a+Number(r['成本']),0));
+assert.equal(s.roi,s.revenue/s.spend);
+assert.equal(s.ctr,s.clicks/s.impressions);
+assert.equal(A.adSummary([]).roi,null);
+assert.equal(A.adSummary([]).ctr,null);
+assert.equal(A.adRisk({spend:0,status:'Ineligible',orders:0,roi:null}).title,'无消耗');
+assert.equal(A.adRisk({spend:10,status:'Active',orders:0,roi:0}).priority,'P0');
+assert.equal(A.adRisk({spend:2,status:'Active',orders:0,roi:0}).priority,'P2');
+assert.equal(A.adRisk({spend:10,status:'Active',orders:2,roi:6},8).priority,'P1');
+assert.equal(A.adRisk({spend:10,status:'Active',orders:2,roi:6},5).priority,'P2');
+const rows=A.billRows(d.bill),trend=A.billTrend(d.bill);
+assert(Math.abs(A.sum(trend,'settle')-A.sum(rows,'结算总金额'))<1e-7);
+assert(Math.abs(A.sum(trend,'profit')-(A.sum(rows,'结算总金额')-A.sum(rows,'订单成本')))<1e-7);
+const tasks=A.tasks(d,{roiTarget:8,minSpend:5,currency:'USD'});
+assert.equal(new Set(tasks.map(t=>t.id)).size,tasks.length);
+assert(tasks.every(t=>t.name&&t.reason&&t.action&&t.rule&&t.source));
+assert.equal(A.dailyTrend(d.daily.raw.daily).length,8);
+assert.equal(A.creatorRows(d.creators).length,186);
+const fake=[['c',1,0,0,2,1,1,1,0,0,0]];
+assert.equal(A.creatorRows(fake)[0].refundRate,2,'Refund rate above 100% must not be clipped');
+assert.equal(A.creatorRows(fake)[0].rpm,null);
+const hashes=d.sourceHashes;
+for(const [file,expected] of Object.entries(hashes)){
+ const hash=require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
+ assert.equal(hash,expected,'Original source changed: '+file);
+}
+console.log(JSON.stringify({tests:'passed',ad:s,taskCount:tasks.length,sourceFiles:Object.keys(hashes).length},null,2));

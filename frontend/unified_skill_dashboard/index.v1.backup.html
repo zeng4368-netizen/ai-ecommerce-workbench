@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>跨境电商综合运营看板</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --sidebar: #111827;
+      --sidebar-soft: #1f2937;
+      --canvas: #f4f7fb;
+      --surface: #ffffff;
+      --line: #e5eaf1;
+      --text: #172033;
+      --muted: #6b7280;
+      --primary: #ff2d78;
+      --primary-soft: #fff0f5;
+      --blue: #2563eb;
+      --green: #0f9f6e;
+      --amber: #d97706;
+      --shadow: 0 12px 30px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body {
+      overflow: hidden;
+      background: var(--canvas);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+    button, a { font: inherit; }
+
+    .app { display: grid; grid-template-columns: 276px minmax(0, 1fr); height: 100vh; }
+    .sidebar {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at 22% 2%, rgba(255, 45, 120, .22), transparent 28%),
+        linear-gradient(180deg, #121827 0%, #0d1422 100%);
+      color: #fff;
+      border-right: 1px solid rgba(255,255,255,.06);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 22px 20px 18px; }
+    .brand-mark {
+      display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto;
+      border-radius: 13px; background: linear-gradient(135deg, #ff2d78, #7c3aed);
+      box-shadow: 0 8px 24px rgba(255,45,120,.35); font-weight: 900; letter-spacing: -.5px;
+    }
+    .brand-title { font-size: 15px; font-weight: 800; letter-spacing: .2px; }
+    .brand-subtitle { margin-top: 4px; color: #9ca3af; font-size: 11px; }
+    .nav-scroll { min-height: 0; overflow-y: auto; padding: 4px 12px 20px; }
+    .nav-group { margin-top: 18px; }
+    .nav-label { padding: 0 10px 8px; color: #6f7b90; font-size: 11px; font-weight: 800; letter-spacing: 1.1px; }
+    .nav-item {
+      width: 100%; display: flex; align-items: center; gap: 11px; margin: 3px 0; padding: 11px 12px;
+      color: #cbd5e1; background: transparent; border: 0; border-radius: 10px; cursor: pointer;
+      text-align: left; transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+    .nav-item:hover { color: #fff; background: rgba(255,255,255,.07); transform: translateX(2px); }
+    .nav-item.active { color: #fff; background: linear-gradient(90deg, rgba(255,45,120,.24), rgba(124,58,237,.16)); }
+    .nav-item.active::after { content: ""; width: 5px; height: 5px; margin-left: auto; border-radius: 50%; background: #ff4d8d; box-shadow: 0 0 0 4px rgba(255,77,141,.14); }
+    .nav-icon { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 8px; background: rgba(255,255,255,.07); font-size: 12px; font-weight: 800; }
+    .sidebar-foot { margin-top: auto; padding: 15px 19px 18px; border-top: 1px solid rgba(255,255,255,.07); color: #728095; font-size: 11px; line-height: 1.6; }
+
+    .main { min-width: 0; min-height: 0; display: grid; grid-template-rows: 66px minmax(0, 1fr); }
+    .topbar {
+      position: relative; z-index: 10; display: flex; align-items: center; gap: 14px; min-width: 0;
+      padding: 0 20px; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .menu-btn, .icon-btn {
+      display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line);
+      border-radius: 10px; background: #fff; color: #374151; cursor: pointer;
+    }
+    .menu-btn { display: none; }
+    .top-title { min-width: 0; }
+    .top-title h1 { margin: 0; overflow: hidden; font-size: 17px; text-overflow: ellipsis; white-space: nowrap; }
+    .top-title p { margin: 4px 0 0; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .top-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 7px; margin-right: 4px; padding: 7px 10px;
+      border-radius: 999px; background: #effaf6; color: #087a55; font-size: 11px; font-weight: 700;
+    }
+    .status-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #19b77e; box-shadow: 0 0 0 3px rgba(25,183,126,.13); }
+    .icon-btn[hidden] { display: none; }
+
+    .workspace { position: relative; min-height: 0; overflow: hidden; }
+    .view { position: absolute; inset: 0; display: none; min-height: 0; }
+    .view.active { display: block; }
+    .scroll-view { overflow: auto; padding: 24px; }
+    .hero {
+      position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr);
+      gap: 24px; padding: 30px; border-radius: 22px; background: linear-gradient(125deg, #151c2f 0%, #222b48 62%, #4e2258 100%);
+      color: #fff; box-shadow: var(--shadow);
+    }
+    .hero::after { content: ""; position: absolute; width: 310px; height: 310px; right: -100px; top: -160px; border-radius: 50%; background: rgba(255,45,120,.22); }
+    .eyebrow { color: #ff8ab3; font-size: 12px; font-weight: 800; letter-spacing: 1.3px; }
+    .hero h2 { max-width: 680px; margin: 12px 0 10px; font-size: clamp(26px, 3vw, 40px); line-height: 1.2; letter-spacing: -1px; }
+    .hero p { max-width: 720px; margin: 0; color: #cbd5e1; font-size: 14px; line-height: 1.8; }
+    .hero-note { align-self: stretch; display: flex; flex-direction: column; justify-content: center; padding: 20px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: rgba(255,255,255,.07); backdrop-filter: blur(10px); }
+    .hero-note strong { font-size: 26px; }
+    .hero-note span { margin-top: 7px; color: #cbd5e1; font-size: 12px; line-height: 1.6; }
+
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 28px 2px 14px; }
+    .section-head h2 { margin: 0; font-size: 18px; }
+    .section-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .module-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+    .module-card {
+      position: relative; overflow: hidden; min-height: 170px; padding: 20px; border: 1px solid var(--line); border-radius: 16px;
+      background: var(--surface); box-shadow: 0 5px 18px rgba(15,23,42,.04); cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .module-card:hover { transform: translateY(-3px); border-color: #d9c2ff; box-shadow: 0 14px 28px rgba(15,23,42,.09); }
+    .card-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 900; }
+    .pink { background: linear-gradient(135deg, #ff2d78, #ff6b53); }
+    .blue { background: linear-gradient(135deg, #2563eb, #06b6d4); }
+    .green { background: linear-gradient(135deg, #059669, #84cc16); }
+    .purple { background: linear-gradient(135deg, #7c3aed, #c026d3); }
+    .module-card h3 { margin: 16px 0 7px; font-size: 15px; }
+    .module-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .card-open { position: absolute; right: 18px; bottom: 17px; color: #8b5cf6; font-size: 12px; font-weight: 800; }
+
+    .resource-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .resource-card { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+    .resource-card h3 { margin: 0 0 8px; font-size: 15px; }
+    .resource-card p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+    .chip { padding: 6px 9px; border-radius: 999px; background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 700; }
+
+    .resource-page { max-width: 1120px; margin: 0 auto; }
+    .resource-banner { padding: 26px; border-radius: 18px; background: #172033; color: #fff; }
+    .resource-banner h2 { margin: 7px 0 8px; font-size: 25px; }
+    .resource-banner p { margin: 0; color: #cbd5e1; font-size: 13px; line-height: 1.75; }
+    .file-list { display: grid; gap: 10px; margin-top: 18px; }
+    .file-link { display: flex; align-items: center; gap: 13px; padding: 15px 16px; border: 1px solid var(--line); border-radius: 13px; background: #fff; color: var(--text); text-decoration: none; }
+    .file-link:hover { border-color: #c4b5fd; background: #faf9ff; }
+    .file-badge { padding: 5px 8px; border-radius: 7px; background: #ede9fe; color: #6d28d9; font-size: 10px; font-weight: 900; }
+    .file-meta { color: var(--muted); font-size: 11px; margin-left: auto; }
+    .notice { margin-top: 16px; padding: 14px 16px; border-left: 4px solid var(--amber); border-radius: 8px; background: #fff8e8; color: #7c4b08; font-size: 12px; line-height: 1.7; }
+    code { padding: 2px 6px; border-radius: 5px; background: #eef2f7; font-family: Consolas, monospace; font-size: 11px; }
+
+    .frame-view { background: #eef2f7; }
+    .module-frame { width: 100%; height: 100%; border: 0; background: #fff; }
+    .loader { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; background: #f4f7fb; }
+    .loader[hidden] { display: none; }
+    .loader-card { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 13px; background: #fff; box-shadow: var(--shadow); color: var(--muted); font-size: 12px; }
+    .spinner { width: 20px; height: 20px; border: 3px solid #eadff5; border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .backdrop { display: none; }
+
+    @media (max-width: 1180px) { .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 780px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: fixed; inset: 0 auto 0 0; width: 276px; transform: translateX(-102%); transition: transform .22s ease; }
+      .app.sidebar-open .sidebar { transform: translateX(0); }
+      .backdrop { position: fixed; inset: 0; z-index: 15; display: none; background: rgba(15,23,42,.44); }
+      .app.sidebar-open .backdrop { display: block; }
+      .menu-btn { display: grid; }
+      .status-pill { display: none; }
+      .scroll-view { padding: 15px; }
+      .hero { grid-template-columns: 1fr; padding: 23px; }
+      .module-grid, .resource-grid { grid-template-columns: 1fr; }
+      .topbar { padding: 0 12px; }
+      .top-title p { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="sidebar" aria-label="模块导航">
+      <div class="brand">
+        <div class="brand-mark">OPS</div>
+        <div><div class="brand-title">跨境电商运营中台</div><div class="brand-subtitle">Unified Operations Dashboard</div></div>
+      </div>
+      <div class="nav-scroll">
+        <div class="nav-group">
+          <div class="nav-label">总览</div>
+          <button class="nav-item active" data-module="home"><span class="nav-icon">01</span><span>经营总览</span></button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">数据看板</div>
+          <button class="nav-item" data-module="gmv-dashboard"><span class="nav-icon">GM</span><span>GMV Max 广告经营</span></button>
+          <button class="nav-item" data-module="ads-data"><span class="nav-icon">AD</span><span>广告数据</span></button>
+          <button class="nav-item" data-module="after-sales"><span class="nav-icon">AS</span><span>售后数据</span></button>
+          <button class="nav-item" data-module="daily-stock"><span class="nav-icon">DS</span><span>日销与库存</span></button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">处理技能</div>
+          <button class="nav-item" data-module="gmv-cleaner"><span class="nav-icon">CL</span><span>GMV MAX 数据清洗</span></button>
+          <button class="nav-item" data-module="adboard-skill"><span class="nav-icon">SK</span><span>广告板块数据处理</span></button>
+        </div>
+      </div>
+      <div class="sidebar-foot">本入口只负责模块拼接与导航。<br>原模块算法、表头和导入导出逻辑保持独立。</div>
+    </aside>
+
+    <div class="backdrop" id="backdrop"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="打开模块导航">☰</button>
+        <div class="top-title"><h1 id="pageTitle">经营总览</h1><p id="pageSubtitle">跨模块入口与技能资源中心</p></div>
+        <div class="top-actions">
+          <span class="status-pill" id="statusPill">模块就绪</span>
+          <button class="icon-btn" id="reloadBtn" title="重新加载当前模块" hidden>↻</button>
+          <button class="icon-btn" id="openBtn" title="独立窗口打开当前模块" hidden>↗</button>
+        </div>
+      </header>
+
+      <section class="workspace" id="workspace">
+        <div class="view scroll-view active" id="view-home">
+          <div class="hero">
+            <div><div class="eyebrow">UNIFIED OPERATIONS</div><h2>一个入口，连接全部运营看板与数据处理技能</h2><p>各模块在独立容器中运行，保留原有数据口径、计算公式、Excel 表头、上传下载和页面状态。切换模块不会重置已经导入的数据。</p></div>
+            <div class="hero-note"><strong>4 + 2</strong><span>4 个原始数据看板<br>2 组数据处理技能资源</span></div>
+          </div>
+
+          <div class="section-head"><div><h2>数据看板</h2><p>点击进入原始模块；首次进入时加载，后续切换保留现场。</p></div></div>
+          <div class="module-grid">
+            <article class="module-card" data-open-module="gmv-dashboard"><div class="card-icon pink">GMV</div><h3>GMV Max 广告经营</h3><p>经营拍板、ROI 风险、优化诊断、素材生命周期和新品经营。</p><span class="card-open">进入模块 →</span></article>
+            <article class="module-card" data-open-module="ads-data"><div class="card-icon blue">ADS</div><h3>广告数据</h3><p>保留“广告数据.html”原文件的全部页面结构与处理逻辑。</p><span class="card-open">进入模块 →</span></article>
+            <article class="module-card" data-open-module="after-sales"><div class="card-icon purple">AS</div><h3>售后数据</h3><p>退包趋势、状态占比、成本分析、店铺和类目明细。</p><span class="card-open">进入模块 →</span></article>
+            <article class="module-card" data-open-module="daily-stock"><div class="card-icon green">INV</div><h3>日销与库存</h3><p>SKU 日销变化、库存异常、店铺联动和超期风险结构。</p><span class="card-open">进入模块 →</span></article>
+          </div>
+
+          <div class="section-head"><div><h2>数据处理技能</h2><p>脚本与规则文档保持原样，以资源模块统一收纳。</p></div></div>
+          <div class="resource-grid">
+            <article class="resource-card"><h3>GMV MAX 广告数据清洗</h3><p>多店铺清洗汇总、Cost=0 剔除、L7D 指标及 CTR/CVR 计算。</p><div class="chip-row"><span class="chip">Python</span><span class="chip">pandas</span><span class="chip">openpyxl</span><span class="chip">15 列固定输出</span></div></article>
+            <article class="resource-card"><h3>广告板块数据处理</h3><p>商品链接汇总与广告汇总两步流程，规则说明及固定表头口径。</p><div class="chip-row"><span class="chip">链接汇总</span><span class="chip">广告汇总</span><span class="chip">49 列固定表头</span></div></article>
+          </div>
+        </div>
+
+        <div class="view scroll-view" id="view-gmv-cleaner">
+          <div class="resource-page">
+            <div class="resource-banner"><div class="eyebrow">PROCESSING SKILL</div><h2>GMV MAX 广告数据清洗</h2><p>该模块不改写 Python 逻辑，只提供统一入口和原始资源。执行前仍需按技能规则确认 L7D 起始日期。</p></div>
+            <div class="file-list">
+              <a class="file-link" href="skills/GMV-MAX广告数据清晰/SKILL.md" target="_blank"><span class="file-badge">MD</span><strong>技能说明</strong><span class="file-meta">SKILL.md</span></a>
+              <a class="file-link" href="skills/GMV-MAX广告数据清晰/references/schema.md" target="_blank"><span class="file-badge">MD</span><strong>字段与口径规范</strong><span class="file-meta">schema.md</span></a>
+              <a class="file-link" href="skills/GMV-MAX广告数据清晰/scripts/gmv_max_cleaner.py" target="_blank"><span class="file-badge">PY</span><strong>原始清洗脚本</strong><span class="file-meta">gmv_max_cleaner.py</span></a>
+            </div>
+            <div class="notice">运行方式保持不变：<code>python scripts/gmv_max_cleaner.py --ad-dir &lt;广告目录&gt; --mapping &lt;人员名单&gt; --start-date YYYY-MM-DD --output &lt;输出.xlsx&gt;</code></div>
+          </div>
+        </div>
+
+        <div class="view scroll-view" id="view-adboard-skill">
+          <div class="resource-page">
+            <div class="resource-banner"><div class="eyebrow">PROCESSING SKILL</div><h2>广告板块数据处理</h2><p>保留链接汇总和广告汇总的原始规则说明，不修改 11 列链接表头、49 列广告表头或 CPA/ROI 口径。</p></div>
+            <div class="file-list">
+              <a class="file-link" href="skills/广告板块数据处理-SKILL说明.md" target="_blank"><span class="file-badge">MD</span><strong>广告板块数据处理 · 技能说明</strong><span class="file-meta">原始文档</span></a>
+            </div>
+            <div class="notice">原说明中提到的 <code>process_links.py</code>、<code>process_ads.py</code>、<code>run_all.py</code> 和 <code>store_info.py</code> 不在原始目录中，因此本看板只收纳现有说明文件，没有补写或改变其底层逻辑。</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const modules = {
+        home: { title: "经营总览", subtitle: "跨模块入口与技能资源中心", type: "static" },
+        "gmv-dashboard": { title: "GMV Max 广告经营", subtitle: "原始 v45 离线看板 · 独立运行", type: "frame", url: "modules/TikTok_GMVMax广告经营管理看板v45_简约版_离线.html" },
+        "ads-data": { title: "广告数据", subtitle: "广告数据.html · 原始页面保持不变", type: "frame", url: "modules/广告数据.html" },
+        "after-sales": { title: "售后数据", subtitle: "售后数据.html · 原始页面保持不变", type: "frame", url: "modules/售后数据.html" },
+        "daily-stock": { title: "日销与库存", subtitle: "日销异常1.html · 原始页面保持不变", type: "frame", url: "modules/日销异常1.html" },
+        "gmv-cleaner": { title: "GMV MAX 数据清洗", subtitle: "原始脚本、技能说明与字段口径", type: "static" },
+        "adboard-skill": { title: "广告板块数据处理", subtitle: "原始技能说明与固定表头口径", type: "static" }
+      };
+
+      const app = document.getElementById("app");
+      const workspace = document.getElementById("workspace");
+      const pageTitle = document.getElementById("pageTitle");
+      const pageSubtitle = document.getElementById("pageSubtitle");
+      const statusPill = document.getElementById("statusPill");
+      const reloadBtn = document.getElementById("reloadBtn");
+      const openBtn = document.getElementById("openBtn");
+      const loadedFrames = new Map();
+      let activeId = "home";
+
+      function ensureFrame(id, definition) {
+        if (loadedFrames.has(id)) return loadedFrames.get(id);
+        const view = document.createElement("div");
+        view.className = "view frame-view";
+        view.id = `view-${id}`;
+        const loader = document.createElement("div");
+        loader.className = "loader";
+        loader.innerHTML = '<div class="loader-card"><span class="spinner"></span><span>正在加载原始模块…</span></div>';
+        const frame = document.createElement("iframe");
+        frame.className = "module-frame";
+        frame.title = definition.title;
+        frame.loading = "eager";
+        frame.addEventListener("load", () => {
+          loader.hidden = true;
+          if (activeId === id) statusPill.textContent = "模块已加载";
+        });
+        view.append(loader, frame);
+        workspace.appendChild(view);
+        frame.src = definition.url;
+        const record = { view, frame, loader };
+        loadedFrames.set(id, record);
+        return record;
+      }
+
+      function closeSidebar() { app.classList.remove("sidebar-open"); }
+
+      function activate(id, updateHash = true) {
+        if (!modules[id]) id = "home";
+        activeId = id;
+        const definition = modules[id];
+        document.querySelectorAll(".view.active").forEach(view => view.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(item => item.classList.toggle("active", item.dataset.module === id));
+        pageTitle.textContent = definition.title;
+        pageSubtitle.textContent = definition.subtitle;
+        reloadBtn.hidden = definition.type !== "frame";
+        openBtn.hidden = definition.type !== "frame";
+
+        if (definition.type === "frame") {
+          const record = ensureFrame(id, definition);
+          record.view.classList.add("active");
+          statusPill.textContent = record.loader.hidden ? "模块已加载" : "模块加载中";
+        } else {
+          document.getElementById(`view-${id}`).classList.add("active");
+          statusPill.textContent = "模块就绪";
+        }
+
+        if (updateHash && location.hash !== `#${id}`) history.replaceState(null, "", `#${id}`);
+        closeSidebar();
+      }
+
+      document.querySelectorAll("[data-module]").forEach(item => item.addEventListener("click", () => activate(item.dataset.module)));
+      document.querySelectorAll("[data-open-module]").forEach(item => item.addEventListener("click", () => activate(item.dataset.openModule)));
+      document.getElementById("menuBtn").addEventListener("click", () => app.classList.toggle("sidebar-open"));
+      document.getElementById("backdrop").addEventListener("click", closeSidebar);
+      reloadBtn.addEventListener("click", () => {
+        const record = loadedFrames.get(activeId);
+        if (!record) return;
+        record.loader.hidden = false;
+        statusPill.textContent = "重新加载中";
+        record.frame.src = record.frame.src;
+      });
+      openBtn.addEventListener("click", () => {
+        const definition = modules[activeId];
+        if (definition?.url) window.open(definition.url, "_blank", "noopener");
+      });
+      window.addEventListener("hashchange", () => activate(location.hash.slice(1) || "home", false));
+      document.addEventListener("keydown", event => {
+        if (!event.altKey) return;
+        const shortcuts = { "1": "home", "2": "gmv-dashboard", "3": "ads-data", "4": "after-sales", "5": "daily-stock" };
+        if (shortcuts[event.key]) { event.preventDefault(); activate(shortcuts[event.key]); }
+      });
+
+      activate(location.hash.slice(1) || "home", false);
+    })();
+  </script>
+</body>
+</html>

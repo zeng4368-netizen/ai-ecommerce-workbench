@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>跨境电商运营 Agent</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='ops_dashboard.css') }}">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">EO</div>
+        <div>
+          <h1>运营 Agent</h1>
+          <p>本地工作台</p>
+        </div>
+      </div>
+
+      <nav class="agent-nav" aria-label="Agent">
+        <a class="{{ 'active' if active_agent == 'complaints' else '' }}" href="#complaints">投诉登记</a>
+        <a class="{{ 'active' if active_agent == 'sales' else '' }}" href="#sales">销售分析</a>
+      </nav>
+
+      <section class="history">
+        <h2>最近运行</h2>
+        {% if runs %}
+          <div class="history-list">
+            {% for run in runs %}
+              <a class="history-item" href="{{ url_for('run_detail', run_id=run.id) }}">
+                <span>{{ agent_labels.get(run.agent, run.agent) }}</span>
+                <small>{{ run.started_at }} · {{ run.status }}</small>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="empty">暂无记录</p>
+        {% endif %}
+      </section>
+    </aside>
+
+    <main class="main">
+      <header class="topline">
+        <div>
+          <p class="eyebrow">Cross-border E-commerce Operations</p>
+          <h2>跨境电商本地自动化工作台</h2>
+        </div>
+        <span class="status">只生成建议与报告</span>
+      </header>
+
+      {% if error %}
+        <section class="alert">{{ error }}</section>
+      {% endif %}
+
+      <section class="workspace">
+        <div class="upload-section" id="complaints">
+          <div class="section-head">
+            <div>
+              <h3>投诉登记 Agent</h3>
+              <p>输出投诉登记表、分类汇总、良品/不良品/人工复核清单。</p>
+            </div>
+          </div>
+          <form action="{{ url_for('run_agent', agent='complaints') }}" method="post" enctype="multipart/form-data" class="upload-form">
+            <label>
+              <span>投诉 Excel</span>
+              <input type="file" name="file" accept=".xlsx,.xls" required>
+            </label>
+            <button type="submit">运行投诉登记</button>
+          </form>
+        </div>
+
+        <div class="upload-section" id="sales">
+          <div class="section-head">
+            <div>
+              <h3>销售分析 Agent</h3>
+              <p>输出日销报告、优惠券申请、达人素材需求和高风险商品清单。</p>
+            </div>
+          </div>
+          <form action="{{ url_for('run_agent', agent='sales') }}" method="post" enctype="multipart/form-data" class="upload-form">
+            <label>
+              <span>销售 Excel</span>
+              <input type="file" name="file" accept=".xlsx,.xls" required>
+            </label>
+            <button type="submit">运行销售分析</button>
+          </form>
+        </div>
+      </section>
+
+      {% if current_run %}
+        <section class="result-head">
+          <div>
+            <p class="eyebrow">Run {{ current_run.id }}</p>
+            <h3>{{ agent_labels.get(current_run.agent, current_run.agent) }} · {{ current_run.status }}</h3>
+            <p>{{ current_run.started_at }}{% if current_run.ended_at %} - {{ current_run.ended_at }}{% endif %}</p>
+          </div>
+          <div class="downloads">
+            {% for artifact in artifacts %}
+              <a href="{{ url_for('download', path=artifact.path) }}">{{ artifact.artifact_type }}</a>
+            {% endfor %}
+          </div>
+        </section>
+
+        {% if markdown_preview %}
+          <section class="markdown-panel">
+            <h3>日报摘要</h3>
+            <pre>{{ markdown_preview }}</pre>
+          </section>
+        {% endif %}
+
+        {% for sheet in previews %}
+          <section class="table-panel">
+            <div class="table-head">
+              <h3>{{ sheet.label }}</h3>
+              <span>{{ sheet.row_count }} 行</span>
+            </div>
+            <div class="table-wrap">
+              {{ sheet.html|safe }}
+            </div>
+          </section>
+        {% endfor %}
+      {% endif %}
+    </main>
+  </div>
+</body>
+</html>

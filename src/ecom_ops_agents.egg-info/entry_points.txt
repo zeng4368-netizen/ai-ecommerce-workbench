@@ -1,0 +1,3 @@
+[console_scripts]
+ecom-ops = ecom_ops.cli:main
+video-mix = ecom_ops.video_mixer.cli:main

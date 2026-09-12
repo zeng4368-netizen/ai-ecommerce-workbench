@@ -1,0 +1,25 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+require('../assets/analysis.js');require('../assets/evidence.js');const Q=require('../assets/question-context.js');
+const ctx={window:{}};vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/snapshot.js','utf8'),ctx);
+const D=ctx.window.WORKBENCH_DATA,S={currency:'USD',roiTarget:8,minSpend:5},original=JSON.stringify(D);
+const q=Q.prepare(D,S,'expose tk的日销哪个产品是异常的','ads');
+assert.equal(q.scope,'daily');assert.equal(q.mode,'direct');assert.equal(q.evidence.sources.length,1);
+const daily=q.evidence.sources[0];assert.deepEqual(daily.shops,['EXPOSE.TK']);assert.ok(daily.rows.length);
+assert.ok(daily.rows.every(r=>r.shops.every(s=>s==='EXPOSE.TK')));
+assert.equal(daily.dates.at(-1),'2026-06-08');assert.equal(daily.dates.length,8);
+assert.ok(!q.prompt.includes('输出结构：事实摘要'));assert.ok(q.prompt.length<50000);
+const source=D.daily.raw.daily.filter(r=>r['店铺']==='EXPOSE.TK');
+for(const row of daily.rows){const raws=source.filter(r=>r['SKU中文名']===row.product);assert.equal(row.latest,raws.reduce((a,r)=>a+Number(r['2026-06-08']||0),0));assert.ok(row.decline);}
+assert.ok(Q.prepare(D,S,'expose的日销异常').evidence.sources[0].clarification);
+assert.ok(Q.prepare(D,S,'unknown shop的日销异常').evidence.sources[0].clarification);
+assert.equal(Q.prepare(D,S,'expose tk 2026-09-07日销异常').evidence.sources[0].unavailableDate,'2026-09-07');
+assert.equal(Q.prepare(D,S,'帮我写四个模块的完整经营报告').mode,'report');
+assert.equal(Q.prepare(D,S,'广告ROI是多少').scope,'ads');
+assert.equal(Q.prepare(D,S,'账单结算是多少').scope,'finance');
+const creator=Q.prepare(D,S,D.creators[0][0]+'这个达人GMV是多少').evidence.sources[0];
+assert.ok(creator.rows.some(r=>r.creator===D.creators[0][0]));
+const ad=Q.prepare(D,S,D.gmv.rows[0]['商品 ID']+'这个商品广告ROI是多少').evidence.sources[0];
+assert.ok(ad.rows.every(r=>r.product===String(D.gmv.rows[0]['商品 ID'])));
+assert.equal(JSON.stringify(D),original);
+const masked=Q.prepare(D,S,'expose tk日销异常','all',()=> 'MASK');assert.equal(masked.evidence.sources[0].rows[0].product,'MASK');
+console.log(JSON.stringify({tests:'passed',shop:daily.shops,products:daily.productCount,declines:daily.declineCount,returned:daily.rows.length,first:daily.rows[0]},null,2));

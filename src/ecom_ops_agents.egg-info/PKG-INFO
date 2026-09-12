@@ -1,0 +1,24 @@
+Metadata-Version: 2.4
+Name: ecom-ops-agents
+Version: 0.2.0
+Summary: Local automation agents for cross-border e-commerce operations.
+Requires-Python: >=3.11
+Requires-Dist: flask>=3.0
+Requires-Dist: fastapi>=0.115
+Requires-Dist: openpyxl>=3.1
+Requires-Dist: pandas>=2.2
+Requires-Dist: playwright>=1.45
+Requires-Dist: python-multipart>=0.0.9
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: streamlit>=1.36
+Requires-Dist: uvicorn>=0.30
+Requires-Dist: yt-dlp>=2026.7
+Requires-Dist: imageio-ffmpeg>=0.5
+Requires-Dist: openai>=2.0
+Requires-Dist: scenedetect>=0.6.7
+Requires-Dist: pillow>=10.0
+Provides-Extra: dev
+Requires-Dist: mypy>=1.11; extra == "dev"
+Requires-Dist: pytest>=8.2; extra == "dev"
+Requires-Dist: ruff>=0.6; extra == "dev"
+Requires-Dist: types-PyYAML>=6.0; extra == "dev"

@@ -1,0 +1,45 @@
+tools:
+  - key: postiz
+    name: Postiz
+    role: 社媒发布与内容排期
+    description: 成熟的多平台内容发布、排期、协作与基础分析平台。
+    repository: https://github.com/gitroomhq/postiz-app
+    license: AGPL-3.0
+    url_setting: postiz_url
+    health_path: /
+    capabilities:
+      - 多平台发布与排期
+      - TikTok 官方 OAuth
+      - 单帖分析
+      - 团队协作
+    safety_note: 工作台只提供只读状态和跳转入口，不自动发布或修改内容。
+
+  - key: brightbean
+    name: BrightBean Studio
+    role: 社媒分析与运营协作
+    description: Python/Django 自托管社媒工作室，提供趋势分析、内容管理和统一收件箱。
+    repository: https://github.com/brightbeanxyz/brightbean-studio
+    license: AGPL-3.0
+    url_setting: brightbean_url
+    health_path: /
+    capabilities:
+      - 7/30/90 天趋势
+      - TikTok 单视频指标
+      - 多工作区
+      - 运营协作
+    safety_note: 作为独立服务运行，凭据不写入本工作台数据库。
+
+  - key: multica
+    name: Multica
+    role: AI Agent 编排与任务协作
+    description: 可连接 Codex 等编码 Agent 的开源任务工作台，支持任务看板、工作区和 Agent 运行管理。
+    repository: https://github.com/multica-ai/multica
+    license: Multica License
+    url_setting: multica_url
+    health_path: /
+    capabilities:
+      - AI Agent 任务看板
+      - Codex 与 Claude Code 运行时
+      - 多工作区协作
+      - Skills 与自动化流程
+    safety_note: 工作台只检测状态并提供入口；登录、授权和实际 Agent 任务必须由用户明确配置或确认。

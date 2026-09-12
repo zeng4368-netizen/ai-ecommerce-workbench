@@ -1,0 +1,1 @@
+"""Safe Playwright automation templates."""

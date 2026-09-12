@@ -1,0 +1,15 @@
+.assistant-layout { align-items: start; }
+.assistant-layout > * { min-width: 0; }
+.assistant-body { white-space: normal; overflow-wrap: anywhere; max-height: 72vh; overflow: auto; padding-right: 12px; }
+.assistant-body p { margin: 0 0 10px; line-height: 1.85; }
+.assistant-body h2 { font-size: 20px; margin: 22px 0 16px; color: #163e34; }
+.assistant-body h3 { font-size: 17px; margin: 22px 0 12px; color: #163e34; }
+.assistant-body h4 { font-size: 15px; margin: 18px 0 10px; }
+.assistant-body blockquote { margin: 14px 0; padding: 10px 14px; background: #f0f5ef; border-left: 3px solid #45735d; }
+.ai-table-wrap { overflow-x: auto; margin: 14px 0 22px; }
+.ai-table-wrap table { border-collapse: collapse; width: 100%; min-width: 800px; font-size: 12px; }
+.ai-table-wrap th { background: #eaf1e8; color: #234b40; text-align: left; position: static; }
+.ai-table-wrap td,.ai-table-wrap th { border: 1px solid #e0e8df; padding: 10px; min-width: 100px; white-space: normal; vertical-align: top; line-height: 1.7; }
+#analysisHistory { max-height: 310px; overflow: auto; }
+#analysisHistory button { border: 1px solid #ceddce; background: #f4f7f0; color: #285b4b; border-radius: 7px; padding: 6px 12px; cursor: pointer; }
+@media print { .assistant-body { max-height: none; overflow: visible; } .ai-table-wrap { overflow: visible; } .ai-table-wrap table { min-width: 0; } }

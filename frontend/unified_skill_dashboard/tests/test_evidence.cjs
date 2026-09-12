@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+global.WorkbenchAnalysis=require('../assets/analysis.js');
+const E=require('../assets/evidence.js');
+const context={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../assets/snapshot.js'),'utf8'),context);
+const D=context.window.WORKBENCH_DATA,settings={currency:'USD',roiTarget:8,minSpend:5};
+const all=E.build(D,settings);assert.equal(all.sources.length,4);
+assert.equal(all.sources[0].metrics.count,206);
+assert.ok(Math.abs(all.sources[0].metrics.spend-1027.883)<1e-8);
+assert.equal(all.sources[1].riskCandidateCount,18);
+assert.equal(all.sources[3].recordCount,630);
+assert.equal(E.build(D,settings,'finance').sources.length,1);
+assert.equal(E.build(D,settings,'ads',()=> 'MASK').sources[0].rows[0].product,'MASK');
+assert.ok(JSON.stringify(all).length<50000);
+console.log('Evidence tests passed: four original datasets, scope filtering, masking, metrics.');

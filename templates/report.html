@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>分析报告</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="shell wide">
+    <section class="topbar">
+      <div>
+        <p class="eyebrow">Generated {{ generated_at }}</p>
+        <h1>电商经营分析报告</h1>
+      </div>
+      <div class="report-actions">
+        <a class="secondary-button" href="{{ url_for('index') }}">重新上传</a>
+        <a class="primary-button" href="{{ url_for('download', filename=report_name) }}">下载当前报告</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h2>筛选条件</h2>
+        {% if filter_summary %}
+          <span>{{ "；".join(filter_summary) }}</span>
+        {% else %}
+          <span>当前为全量数据</span>
+        {% endif %}
+      </div>
+      <form class="filter-form" method="get" action="{{ url_for('report', session_id=session_id) }}">
+        <label>
+          <span>店铺</span>
+          <select name="shop">
+            <option value="">全部店铺</option>
+            {% for shop in filter_options.shops %}
+              <option value="{{ shop }}" {% if filters.get("shop") == shop %}selected{% endif %}>{{ shop }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          <span>SKU</span>
+          <select name="sku">
+            <option value="">全部 SKU</option>
+            {% for sku in filter_options.skus %}
+              <option value="{{ sku.value }}" {% if filters.get("sku") == sku.value %}selected{% endif %}>{{ sku.label }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          <span>产品关键词</span>
+          <input name="keyword" value="{{ filters.get('keyword', '') }}" placeholder="例如 储能 / 保险箱">
+        </label>
+
+        <label>
+          <span>一级类目</span>
+          <select name="category1">
+            <option value="">全部一级类目</option>
+            {% for item in filter_options.categories1 %}
+              <option value="{{ item }}" {% if filters.get("category1") == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          <span>二级类目</span>
+          <select name="category2">
+            <option value="">全部二级类目</option>
+            {% for item in filter_options.categories2 %}
+              <option value="{{ item }}" {% if filters.get("category2") == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          <span>三级类目</span>
+          <select name="category3">
+            <option value="">全部三级类目</option>
+            {% for item in filter_options.categories3 %}
+              <option value="{{ item }}" {% if filters.get("category3") == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <div class="filter-actions">
+          <a class="secondary-button" href="{{ url_for('report', session_id=session_id) }}">清空筛选</a>
+          <button type="submit">应用筛选</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="metric-grid">
+      {% for metric in metrics %}
+        <div class="metric {% if metric.name in ['标价利润', '到账利润', '去除邮局', '退货退款占比'] %}metric-focus{% endif %}">
+          <span>{{ metric.name }}</span>
+          <strong>{{ metric.value }}</strong>
+        </div>
+      {% endfor %}
+    </section>
+
+    <section class="formula-strip" aria-label="利润口径">
+      <div><strong>标价利润</strong><span>(标价收入 - 货品成本) / 标价收入</span></div>
+      <div><strong>到账利润</strong><span>(到账收入 - 货品成本 - 退包成本) / 到账收入</span></div>
+      <div><strong>去除邮局</strong><span>(到账收入 - 货品成本 + 退包成本) / 到账收入</span></div>
+      <div><strong>退货退款占比</strong><span>-(退包成本 + 退款金额 + 退款成本) / 到账收入</span></div>
+    </section>
+
+    {% if charts %}
+      <section class="panel">
+        <div class="section-heading">
+          <h2>图表分析</h2>
+          <span>随筛选条件自动更新</span>
+        </div>
+        <div class="chart-grid">
+          {% for chart in charts %}
+            <article class="chart-card">
+              <div class="chart-title">
+                <h3>{{ chart.title }}</h3>
+                <span>{{ chart.kind }}</span>
+              </div>
+              <div class="chart-body">
+                {{ chart.html | safe }}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if notes %}
+      <section class="panel">
+        <h2>经营提示</h2>
+        <ul class="notes">
+          {% for note in notes %}
+            <li>{{ note }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    <section class="panel">
+      <h2>数据来源</h2>
+      <div class="source-grid">
+        {% for key, source in sources.items() %}
+          <div><span>{{ key }}</span>{{ source }}</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <nav class="section-nav">
+      {% for section in sections %}
+        <a href="#section-{{ loop.index }}">{{ section.title }}</a>
+      {% endfor %}
+    </nav>
+
+    {% for section in sections %}
+      <section class="table-section" id="section-{{ loop.index }}">
+        <div class="section-heading">
+          <h2>{{ section.title }}</h2>
+          <span>共 {{ section.rows }} 行，表格内可下滑查看全部</span>
+        </div>
+        <div class="table-wrap">
+          {{ section.html | safe }}
+        </div>
+      </section>
+    {% endfor %}
+  </main>
+  <script src="{{ url_for('static', filename='table_tools.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>电商经营分析工具</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <section class="topbar">
+      <div>
+        <p class="eyebrow">Excel Analysis MVP</p>
+        <h1>电商经营分析工具</h1>
+      </div>
+      <div class="status-pill">本地运行</div>
+    </section>
+
+    {% if error %}
+      <section class="alert">{{ error }}</section>
+    {% endif %}
+
+    <section class="panel">
+      <h2>上传数据</h2>
+      <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" class="upload-grid">
+        {% for field, label in file_fields.items() %}
+          <label class="upload-slot">
+            <span>{{ label }}</span>
+            <input type="file" name="{{ field }}" accept=".xlsx,.xls">
+            <small>
+              {% if defaults.get(field) %}
+                未上传时使用：{{ defaults.get(field).name }}
+              {% else %}
+                必填
+              {% endif %}
+            </small>
+          </label>
+        {% endfor %}
+        <div class="actions">
+          <button type="submit">生成分析报告</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>当前支持的分析</h2>
+      <div class="capability-grid">
+        <div>销售额、订单数、销量、作废订单</div>
+        <div>SKU 成本、标价利润、到账利润</div>
+        <div>零金额样品/赠品成本占用</div>
+        <div>结算、退款、佣金、手续费、运费</div>
+        <div>库存可售天数和缺货风险</div>
+        <div>超期库存、超期金额、清仓优先级</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

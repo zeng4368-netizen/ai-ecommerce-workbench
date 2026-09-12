@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "skills": {
+    "ziniao-access-policy": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-access-policy/SKILL.md",
+      "computedHash": "7abe2af2c05cbf0d0332a958f0d171d8b1cb4895169a6f111dd760b6b5af53eb"
+    },
+    "ziniao-account": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-account/SKILL.md",
+      "computedHash": "53efa748d58be4537c63e04ca451e6926da3b3ed0801171afdf9e13bb56b3ac7"
+    },
+    "ziniao-department": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-department/SKILL.md",
+      "computedHash": "522008fcf87309f6e628ba056d4dfb35cc663fbbe28f0bbfee133a70fc9c8f56"
+    },
+    "ziniao-device": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-device/SKILL.md",
+      "computedHash": "e916082fa6b97fc5450ce61292718d4d42139b44867dd794cfc3f124dcbb6015"
+    },
+    "ziniao-openapi-explorer": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-openapi-explorer/SKILL.md",
+      "computedHash": "1948bf6a26dfde03ff4d0b0c10593916bdbd9ab34c70f7f1408fef0f89569377"
+    },
+    "ziniao-page": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-page/SKILL.md",
+      "computedHash": "54183c7b757d1ae58b8343d6c9243439b74c752e928396ee6f0afb15a6e49185"
+    },
+    "ziniao-role": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-role/SKILL.md",
+      "computedHash": "52e740b14d36c94f7c90fe3c5d5bc7b42da5839586002a5e3aacdd57bb945971"
+    },
+    "ziniao-shared": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-shared/SKILL.md",
+      "computedHash": "dcfc517d1cdb56b35aefec59ac2709f2ecee3a250b9f30b2537cf4f99f2563b6"
+    },
+    "ziniao-skill-maker": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-skill-maker/SKILL.md",
+      "computedHash": "61bf5a5eb76b48ed59802a85f6207aeff846f1323e5024745e3cae64ff7eaf75"
+    },
+    "ziniao-staff": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-staff/SKILL.md",
+      "computedHash": "3a82b3dad4e28b8171e91c0c3c06068dd3c0f71495c88e5c64c567b389c4998c"
+    },
+    "ziniao-store": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-store/SKILL.md",
+      "computedHash": "b293fb1b19f0f5f9f8dd85eda12740df643a9448cbd1391435df6ecdb94e0f83"
+    },
+    "ziniao-workflow-batch-account": {
+      "source": "ziniao-open/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ziniao-workflow-batch-account/SKILL.md",
+      "computedHash": "ea0d107a9f08da6aefdb890c812490111bcec6105ff074824015560686e5c1d5"
+    }
+  }
+}

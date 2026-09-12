@@ -1,0 +1,15 @@
+{
+  "created_at": "2026-06-05T17:29:22",
+  "files": {
+    "sales": "D:\\codex\\uploads\\20260605_172921_44f16a3b\\sales_51.xlsx",
+    "income": "D:\\codex\\income_20260605141142(UTC+8).xlsx",
+    "price": "D:\\codex\\2026-06-控价 (1).xlsx",
+    "overdue": "D:\\codex\\2026-马来超期 (1).xlsx"
+  },
+  "sources": {
+    "sales": "上传：5月销售数据1.xlsx",
+    "income": "默认：income_20260605141142(UTC+8).xlsx",
+    "price": "默认：2026-06-控价 (1).xlsx",
+    "overdue": "默认：2026-马来超期 (1).xlsx"
+  }
+}

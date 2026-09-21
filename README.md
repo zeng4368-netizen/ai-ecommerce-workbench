@@ -8,7 +8,9 @@
 - [给 AI 的项目接手说明](docs/WORKBENCH_AI_HANDOFF.md)
 - [六店账单真实导出与验收记录](frontend/unified_skill_dashboard/reports/six_store_bills_2026-09-11.md)
 
-私有仓库包含真实业务资料，请不要改成公开。完整迁移还需要配套 Release 的数据包；密钥在独立加密包中，解密钥匙不在 GitHub。
+本仓库已公开，可通过 GitHub 的 **Code → Download ZIP** 下载，或直接下载
+[main 分支压缩包](https://github.com/zeng4368-netizen/ai-ecommerce-workbench/archive/refs/heads/main.zip)。
+运行时数据库、登录凭据和解密钥匙不在 GitHub；完整迁移仍需要单独的数据包和凭据包。
 
 ```powershell
 python -m venv .venv

@@ -26,7 +26,7 @@ LABELS = {'gmv':'广告经营明细','daily':'店铺日销','erp':'ERP 库存详
 REQUIRED = {
  'gmv':['商品 ID','成本','总收入','SKU 订单数','创意作品类型','货币'],
  'daily':['库存SKU','SKU中文名','店铺'],
- 'erp':['库存SKU编号','中文名称','仓位库存','可用库存量','当前可售天数','销量(7/28/42)'],
+ 'erp':['库存SKU编号','中文名称','仓位库存','可用库存量','当前可售天数','销量(7)','销量(28)','销量(42)'],
  'warn':['商品名称','超期金额'], 'bill':['订单结算时间','月份','状态','一级类目','二级类目','三级类目','款名','中文名','店编','产品标签','是否样品','订单成本','结算总金额','总收入','退款类型','订单类型','相关订单 ID','商家运费','交易手续费','TikTok Shop 佣金费','平台支持费','奖金返现服务费','商家共同赞助优惠券折扣','联盟佣金','联盟服务商佣金','联盟店铺广告佣金','所属地区'],
  'after':['登记月份','订单商品数量','退包类型','收货状态','店铺','登记时间','一级类目','二级类目','三级类目','款名','商品成本价','sku处理结果','最后验货入库时间'],
  'creator':['达人名称','达人归因GMV','达人直播归因GMV','联盟视频归因GMV','退款金额','归因订单数','平均订单金额','联盟商品卡归因GMV','视频数','视频播放量','预计佣金'], 'mapping':['店名','店编','国家','初级','中级','CEO'],
@@ -41,6 +41,19 @@ REQUIRED = {
 def stamp(): return datetime.now(timezone.utc).isoformat()
 def pack(value): return json.dumps(value, ensure_ascii=False, separators=(',',':'), allow_nan=False)
 def digest(value): return hashlib.sha256(value).hexdigest()
+
+def suggested_period(filename,dates):
+    if dates:return dates[0] if len(dates)==1 else dates[0]+'/'+dates[-1]
+    stem=Path(filename).stem
+    match=re.search(r'(?<!\d)(20\d{2})[._-](\d{1,2})[._-](\d{1,2})(?!\d)',stem)
+    parts=match.groups() if match else None
+    if not parts:
+        match=re.search(r'(?<!\d)(1[0-2]|0?[1-9])[._-](3[01]|[12]\d|0?[1-9])(?!\d)',stem)
+        parts=(str(date.today().year),*match.groups()) if match else None
+    if parts:
+        try:return date(*map(int,parts)).isoformat()
+        except ValueError:pass
+    return ''
 
 def engine(payload):
     try:
@@ -182,6 +195,11 @@ class Hub:
                 except HTTPException as exc:issues.append(exc.detail)
             else:
                 missing=[h for h in REQUIRED[kind] if h not in header]
+                # Current ERP exports split the former 销量(7/28/42) field into
+                # three numeric columns. Keep old saved exports importable so
+                # historical workbench versions can still be restored.
+                if kind=='erp' and '销量(7/28/42)' in header:
+                    missing=[h for h in missing if h not in ('销量(7)','销量(28)','销量(42)')]
                 if missing: issues.append('缺少字段：'+'、'.join(missing))
             if len(set(header))!=len(header) or '' in header: issues.append('存在空白或重复表头，请修正后重新上传。')
             for col,h in enumerate(header):
@@ -195,7 +213,8 @@ class Hub:
             if kind=='after' and '登记月份' in header:
                 months={str(r[header.index('登记月份')]) for r in rows}
                 if len(months)>4: issues.append('原售后引擎仅支持单批最多4个月；请缩小周期，不能静默丢失第5个月数据。')
-            numeric={'gmv':['成本','总收入','SKU 订单数'],'bill':['订单成本','结算总金额','总收入'],'creator':REQUIRED['creator'][1:]}.get(kind,[])
+            numeric={'gmv':['成本','总收入','SKU 订单数'],'bill':['订单成本','结算总金额','总收入'],
+                     'erp':['销量(7)','销量(28)','销量(42)'],'creator':REQUIRED['creator'][1:]}.get(kind,[])
             for column in numeric:
                 if column in header:
                     for row in rows:
@@ -209,7 +228,7 @@ class Hub:
             dates=sorted({h[:10] for h in header if re.match(r'^20\d{2}-\d{2}-\d{2}',h)})
             result.append({'id':uuid.uuid4().hex,'name':filename,'sheet':sheet,'kind':kind,'header_row':header_row+1,
                            'header':header,'rows':rows,'row_count':len(rows),'issues':list(dict.fromkeys(issues)),
-                           'suggested_period':('/'.join([dates[0],dates[-1]]) if dates else ''),'sha256':digest(content)})
+                           'suggested_period':suggested_period(filename,dates),'sha256':digest(content)})
         return result
 
     def activate(self,job_id,payload,dry_run=False):

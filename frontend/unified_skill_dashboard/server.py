@@ -63,6 +63,8 @@ async def local_writes(request: Request, call_next):
         if origin and origin != str(request.base_url).rstrip('/'):
             return JSONResponse({'detail': '仅允许工作台同源请求'}, status_code=403)
     response = await call_next(request)
+    if not request.url.path.startswith('/api/'):
+        response.headers['Cache-Control'] = 'no-cache'
     logging.info('%s %s %s', request.method, request.url.path, response.status_code)
     return response
 
@@ -332,6 +334,18 @@ from ziniao_collection import Collection
 collection = Collection(hub, PROJECT/'config/selectors.yaml',
                         lambda messages: local_model('', messages=messages, max_tokens=2000))
 app.include_router(collection.router())
+
+from tiktok_patrol import Patrol
+patrol = Patrol(hub, PROJECT/'config/selectors.yaml')
+app.include_router(patrol.router())
+from tiktok_patrol_live import LivePatrol
+live_patrol = LivePatrol(patrol)
+app.include_router(live_patrol.router())
+from tiktok_ads_dashboard import create_router as create_ads_dashboard_router
+app.include_router(create_ads_dashboard_router(live_patrol))
+from tiktok_patrol_details import DetailPatrol
+detail_patrol = DetailPatrol(live_patrol)
+app.include_router(detail_patrol.router())
 
 app.mount('/', StaticFiles(directory=ROOT, html=True), name='workspace')
 

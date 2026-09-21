@@ -15,7 +15,7 @@
    const note=document.createElement('div');note.id='hubModuleNote';
    const key={creator:'creator',profit:'bill',marketing:'creator',gmv:'gmv',daily:'daily',after:'after'}[config.kind];
    const meta=config.meta[key]||{};
-   note.textContent=`统一数据版本 ${config.version.slice(0,8)} · ${meta.period||'周期未标注'} · 原计算口径与导出保留。筛选在本模块内生效。`;
+   note.textContent=`统一数据版本 ${config.version.slice(0,8)} · ${meta.period||'周期未标注'} · ${config.kind==='daily'?'国家与店铺筛选联动本页和导出':'原计算口径与导出保留。筛选在本模块内生效。'}`;
    if(meta.completeness)note.textContent+=' '+meta.completeness;
    const upload=document.createElement('button');upload.textContent='更新数据 →';upload.onclick=()=>notify('hub:import');note.append(upload);document.body.prepend(note);
    const ask=document.createElement('button');ask.textContent='带当前范围询问 AI';ask.style.marginRight='20px';ask.onclick=()=>{

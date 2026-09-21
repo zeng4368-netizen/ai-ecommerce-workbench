@@ -82,6 +82,19 @@ def test_native_parse_precision_privacy_dates_currency():
         with pytest.raises(HTTPException):parse(content)
 
 
+def test_live_patrol_lease_blocks_bill_export(system):
+    import time
+    from tiktok_patrol_live import LEASE_SCHEMA
+    c,calls,_=system
+    job=c.new_run(now=datetime(2026,9,11,9,tzinfo=MY))
+    with c.db() as con:
+        con.execute(LEASE_SCHEMA)
+        con.execute('INSERT INTO ziniao_browser_lease VALUES(1,?,?)',('synthetic-patrol',time.time()+180))
+    with pytest.raises(HTTPException) as error:c.submit(job['id'])
+    assert error.value.status_code==409
+    assert c.get(job['id'])['state']=='queued' and not calls
+
+
 def test_atomic_import_report_chat_action_and_original_unchanged(system):
     c,calls,_=system;before=c.hub.current();job=ready(c)
     assert c.hub.current()['version']==before['version']

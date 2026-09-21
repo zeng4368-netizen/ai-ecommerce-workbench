@@ -220,6 +220,10 @@ class Collection:
             if ident in self.running: raise HTTPException(409, '任务正在执行')
             with self.db() as con:
                 con.execute('BEGIN IMMEDIATE')
+                from tiktok_patrol_live import LEASE_SCHEMA
+                con.execute(LEASE_SCHEMA)
+                if con.execute('SELECT owner FROM ziniao_browser_lease WHERE id=1 AND expires>?',(time.time(),)).fetchone():
+                    raise HTTPException(409,'实时巡检正在读取店铺，请完成后再导出账单')
                 other=con.execute("SELECT id FROM ziniao_runs WHERE state='running' AND id!=?",(ident,)).fetchone()
                 if other:raise HTTPException(409,'另一店铺正在导出；批量任务按顺序执行，请稍后恢复')
                 job = json.loads(con.execute('SELECT value FROM ziniao_runs WHERE id=?', (ident,)).fetchone()[0])

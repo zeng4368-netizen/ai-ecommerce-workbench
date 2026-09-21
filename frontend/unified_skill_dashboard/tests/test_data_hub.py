@@ -32,7 +32,9 @@ def test_seed_and_original_engine_parity(client):
     assert computed['kpis']==d['kpis']
     old={r['name']:r for r in d['products']};new={r['name']:r for r in computed['products']}
     assert old.keys()==new.keys()
-    assert len(initial['meta']['baseline_differences'])==229
+    # The frozen eight-day sample has no valid prior seven-day window.
+    # The new engine also sums actual daily sales instead of extrapolating avg14.
+    assert len(initial['meta']['baseline_differences'])==427
     assert initial['data']['embedded_daily_baseline']['products'][1]['avg42']==34.12
     for name,row in old.items():
         for k,v in row.items(): assert new[name][k]==v,(name,k,new[name][k],v)
@@ -61,6 +63,29 @@ def test_import_atomic_versions_restore_and_full_query(client):
     assert restore.status_code==200
     assert client.get('/api/hub/workspace').json()['data']==old['data']
     assert len(client.get('/api/hub/versions').json()['versions'])==3
+
+def test_erp_split_sales_columns_are_current_schema_and_drive_engine(client):
+    row={h:'' for h in REQUIRED['erp']}
+    row.update({'库存SKU编号':'ERP-SKU-1','中文名称':'ERP-SPLIT-SALES','商品状态':'正常销售',
+                '仓位库存':70,'可用库存量':63,'当前可售天数':7,
+                '销量(7)':35,'销量(28)':120,'销量(42)':150})
+    job=upload(client,[row],kind='erp',name='9.19马来ERP.xlsx',sheet='库存详细')
+    assert job['entries'][0]['issues']==[]
+    assert job['entries'][0]['suggested_period']=='2026-09-19'
+    current=client.get('/api/hub/workspace').json()
+    result=activate(client,job,current['version'],period='2026-09-19')
+    assert result.status_code==200,result.text
+    workspace=client.get('/api/hub/workspace').json()
+    raw=workspace['data']['daily']['raw']['erp'][0]
+    assert [raw['销量(7)'],raw['销量(28)'],raw['销量(42)']]==[35,120,150]
+    product=next(p for p in workspace['data']['daily']['products'] if p['name']=='ERP-SPLIT-SALES')
+    assert product['stock']==70 and product['available']==63
+
+def test_erp_legacy_combined_sales_column_remains_importable(client):
+    row={'库存SKU编号':'ERP-OLD-1','中文名称':'ERP-LEGACY','仓位库存':14,
+         '可用库存量':12,'当前可售天数':7,'销量(7/28/42)':'7/28/42'}
+    job=upload(client,[row],kind='erp',name='legacy-erp.xlsx',sheet='库存详细')
+    assert job['entries'][0]['issues']==[]
 
 def test_invalid_id_dates_currency_never_overwrite(client):
     old=client.get('/api/hub/workspace').json()['version']
@@ -243,3 +268,15 @@ def test_tool_whitelist_and_timeout_preserve_data(client,monkeypatch):
     monkeypatch.setattr(server,'local_model',timeout)
     assert client.post('/api/hub/assistant',json={'question':'查数据','version':before}).status_code==504
     assert client.get('/api/hub/workspace').json()['version']==before
+
+
+def test_daily_comparison_uses_disjoint_weeks_and_actual_total():
+    row={'库存SKU':'S1','SKU中文名':'P1','店铺':'Store'}
+    row.update({f'2026-09-{day:02d}': (10 if day <= 7 else 20) for day in range(1,15)})
+    result=engine({'op':'daily','raw':{'erp':[],'daily':[row],'warn':[]}})
+    product=result['products'][0]
+    assert product['ring']==100 and product['totalSales']==210
+    assert product['noERP'] and '断货风险' not in result['detailData']['P1']['riskTags']
+    row.pop('2026-09-01')
+    short=engine({'op':'daily','raw':{'erp':[],'daily':[row],'warn':[]}})['products'][0]
+    assert short['ring'] is None and short['totalSales']==200

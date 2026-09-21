@@ -666,6 +666,8 @@ h1{margin:0;font-size:clamp(24px,2vw,32px);letter-spacing:-.04em}
 <!-- V49: uploaded data auto-saves to browser storage and restores on reopen. -->
 <!-- V50: overdue module added with current/projected overdue risk board and action table. -->
 <!-- V51: export adds product-level decline summary sheet sorted by secondary category. -->
+<link rel="stylesheet" href="/assets/daily-scope.css?v=1">
+<script src="/assets/daily-scope.js?v=1"></script>
 </head>
 <body>
 <div class="app">
@@ -713,7 +715,7 @@ h1{margin:0;font-size:clamp(24px,2vw,32px);letter-spacing:-.04em}
       <div class="periods"><button class="period-btn active" data-period="7">7天</button><button class="period-btn" data-period="14">14天</button><button class="period-btn" data-period="28">28天</button><button class="period-btn" data-period="42">42天</button></div>
     </section>
 
-    <section class="table-section"><div class="table-head"><div><h3 class="table-title">SKU 销售库存联动分析</h3><div class="table-subtitle">已重新读取 ERP、日销、库存预警 3 个文件；第5行日销来自 TikTok 日销文件，默认按7天日销降序。</div></div><div class="table-meta" id="tableMeta">533 条</div></div><div class="table-wrap"><table><thead><tr><th id="sortIndex">序号 ↕</th><th>商品名</th><th>42天</th><th>28天</th><th>14天</th><th>7天日销</th><th>环比值</th><th>当天环比</th><th>总销</th><th>周转条 + 在仓周转</th><th>可用库存</th><th>在途量</th><th>超期金额</th><th>日销趋势</th></tr></thead><tbody id="tableBody"><tr><td colspan="14" style="text-align:center;color:#999;padding:30px">数据加载中...</td></tr></tbody></table></div></section>
+    <section class="table-section"><div class="table-head"><div><h3 class="table-title">SKU 销售库存联动分析</h3><div class="table-subtitle">已重新读取 ERP、日销、库存预警 3 个文件；第5行日销来自 TikTok 日销文件，默认按7天日销降序。</div></div><div class="table-meta" id="tableMeta">533 条</div></div><div class="table-wrap"><table><thead><tr><th id="sortIndex">序号 ↕</th><th>商品名</th><th>42天</th><th>28天</th><th>14天</th><th>7天日销</th><th title="最近7天日均 / 前7天日均 - 1；不足14天不计算">周环比</th><th>当天环比</th><th>总销</th><th>周转条 + 在仓周转</th><th>可用库存</th><th>在途量</th><th>超期金额</th><th>日销趋势</th></tr></thead><tbody id="tableBody"><tr><td colspan="14" style="text-align:center;color:#999;padding:30px">数据加载中...</td></tr></tbody></table></div></section>
   </main>
 
 
@@ -858,7 +860,7 @@ h1{margin:0;font-size:clamp(24px,2vw,32px);letter-spacing:-.04em}
               <th>28天</th>
               <th>14天</th>
               <th>7天日销</th>
-              <th>环比值</th>
+              <th title="最近7天日均 / 前7天日均 - 1；不足14天不计算">周环比</th>
               <th>当天环比</th>
               <th>总销</th>
               <th>周转条 + 在仓周转</th>
@@ -1320,6 +1322,13 @@ function parseSales(v) {
   const parts = cleanStr(v).replace(/,/g, "").split("/");
   return [toNum(parts[0]), toNum(parts[1]), toNum(parts[2])];
 }
+function getErpSales(row) {
+  const splitFields = ["销量(7)", "销量(28)", "销量(42)"];
+  if (splitFields.some(name => Object.prototype.hasOwnProperty.call(row, name))) {
+    return splitFields.map(name => toNum(getField(row, [name])));
+  }
+  return parseSales(getField(row, ["销量(7/28/42)"]));
+}
 function unique(arr) {
   return Array.from(new Set((arr || []).map(cleanStr).filter(Boolean))).sort((a, b) => a.localeCompare(b, "zh-Hans-CN"));
 }
@@ -1352,10 +1361,19 @@ function updateHeaderStatus() {
   if (sub) sub.textContent = `Soft Glass Operations Dashboard · ERP ${RAW.erp.length} 行 / 日销 ${RAW.daily.length} 行 / 预警 ${RAW.warn.length} 行`;
 }
 
+function previousWeekAverage(cols, vals) {
+  if (cols.length < 14) return null;
+  const times = cols.slice(-14).map(x => new Date(String(x)).getTime());
+  if (times.some((t,i) => !Number.isFinite(t) || (i > 0 && t-times[i-1] !== 86400000))) return null;
+  return vals.slice(-14,-7).reduce((a,b) => a+b,0)/7;
+}
+function analysisRaw() {
+  return typeof window !== "undefined" && window.dailyScopedRaw ? window.dailyScopedRaw(RAW) : RAW;
+}
 function buildDashboardData() {
-  const erpRows = RAW.erp || [];
-  const dailyRows = RAW.daily || [];
-  const warnRows = RAW.warn || [];
+  const erpRows = analysisRaw().erp || [];
+  const dailyRows = analysisRaw().daily || [];
+  const warnRows = analysisRaw().warn || [];
 
   const filteredErp = erpRows.filter(row => {
     const sku = cleanStr(getField(row, ["库存SKU编号"]));
@@ -1371,7 +1389,7 @@ function buildDashboardData() {
     item.activity = normalizeActivity(getField(row, ["活跃度"]));
     item.stock += toNum(getField(row, ["仓位库存"]));
     item.days = Math.max(item.days, toNum(getField(row, ["当前可售天数"])));
-    const sales = parseSales(getField(row, ["销量(7/28/42)"]));
+    const sales = getErpSales(row);
     item.sale7 += sales[0];
     item.sale28 += sales[1];
   });
@@ -1410,7 +1428,7 @@ function buildDashboardData() {
     item.days = Math.max(item.days, toNum(getField(row, ["当前可售天数"])));
     item.available += toNum(getField(row, ["可用库存量"]));
     item.transit += toNum(getField(row, ["在途量"]));
-    item.erpSale7Total += parseSales(getField(row, ["销量(7/28/42)"]))[0];
+    item.erpSale7Total += getErpSales(row)[0];
   });
 
   const warnMap = new Map();
@@ -1420,7 +1438,7 @@ function buildDashboardData() {
     warnMap.set(name, (warnMap.get(name) || 0) + toNum(getField(row, ["超期金额"])));
   });
 
-  const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn)));
+  const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn))).sort();
   const dates = dateCols.map(dateLabel);
   const dailyProd = new Map();
   const storeMap = new Map();
@@ -1450,7 +1468,8 @@ function buildDashboardData() {
     else if (n > 0) avg14 = (sum + (14 - n) * baseAvg) / 14;
     const avg28 = n >= 28 ? vals.slice(-28).reduce((a, b) => a + b, 0) / 28 : baseAvg;
     const avg42 = n >= 42 ? vals.slice(-42).reduce((a, b) => a + b, 0) / 42 : baseAvg;
-    const ring = avg14 > 0 ? (avg7 - avg14) / avg14 * 100 : null;
+    const prev7Avg = previousWeekAverage(dateCols, vals);
+    const ring = prev7Avg > 0 ? (avg7 - prev7Avg) / prev7Avg * 100 : null;
     const today = n ? vals[n - 1] : 0;
     const yesterday = n >= 2 ? vals[n - 2] : 0;
     const dayRing = yesterday > 0 ? (today - yesterday) / yesterday * 100 : null;
@@ -1462,7 +1481,8 @@ function buildDashboardData() {
     const shopeeShare = erpAvg7 > 0 ? Math.max(0, 100 - tiktokShare) : 0;
     const transitDays = erpAvg7 > 0 ? erp.transit / erpAvg7 : 0;
     const riskTags = [];
-    if (erp.stock <= 0) riskTags.push("断货风险");
+    if (!erp.skuList.length) riskTags.push("库存未匹配");
+    else if (erp.stock <= 0) riskTags.push("断货风险");
     else if (erp.days > 0 && erp.days < 25) riskTags.push("25天以下");
     else if (erp.days >= 25 && erp.days <= 50) riskTags.push("周转合理");
     else if (erp.days > 50 && erp.days < 90) riskTags.push("周转超期");
@@ -1480,9 +1500,10 @@ function buildDashboardData() {
       avg28: +avg28.toFixed(2),
       avg14: +avg14.toFixed(2),
       avg7: +avg7.toFixed(2),
+      prev7Avg,
       ring: ring === null ? null : +ring.toFixed(1),
       dayRing: dayRing === null ? null : +dayRing.toFixed(1),
-      totalSales: Math.round(avg14 * n),
+      totalSales: Math.round(sum),
       days: Math.round(erp.days),
       available: Math.round(erp.available),
       transit: Math.round(erp.transit),
@@ -1530,6 +1551,7 @@ function renderKpis() {
   document.getElementById("statusTags").innerHTML = (KPIS.statusCounts || []).map(x => `<span class="mini-tag">${esc(x.label)} <strong>${x.count}</strong></span>`).join("");
   const max = Math.max(1, ...(KPIS.activityCounts || []).map(x => x.count || 0));
   document.getElementById("activityBars").innerHTML = (KPIS.activityCounts || []).map(x => `<div class="bar-row"><span class="bar-label">${esc(x.label)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(10, Math.round((x.count || 0) / max * 100))}%"></div></div><span class="bar-value">${x.count || 0}</span></div>`).join("");
+  if (!analysisRaw().erp.length) ["totalSku","salesUp","salesDown","stockout","oversell","turnLt25","turn50to90","turnGt90"].forEach(id => document.getElementById(id).textContent = "—");
 }
 function ringTag(r) {
   if (r === null || r === undefined || !Number.isFinite(+r)) return '<span class="ring-tag neutral">--</span>';
@@ -1571,15 +1593,15 @@ function periodVal(p) {
 function passTrend(p, type) {
   if (!type) return true;
   const pv = periodVal(p);
-  if (type === "up") return p.avg7 > p.avg14;
-  if (type === "down") return p.avg7 < p.avg14;
+  if (type === "up") return p.prev7Avg !== null && p.avg7 > p.prev7Avg;
+  if (type === "down") return p.prev7Avg !== null && p.avg7 < p.prev7Avg;
   if (type === "active") return pv > 0;
   if (type === "stagnant") return pv === 0;
   return true;
 }
 function passTurnover(p, type) {
   if (!type) return true;
-  if (type === "stockout") return p.stock <= 0;
+  if (type === "stockout") return !p.noERP && p.stock <= 0;
   if (type === "lt25") return p.days > 0 && p.days < 25;
   if (type === "normal") return p.days >= 25 && p.days < 50;
   if (type === "50to90") return p.days >= 50 && p.days <= 90;
@@ -1610,7 +1632,7 @@ function filteredProducts() {
   return rows.sort((a,b) => sortDesc ? b.avg7 - a.avg7 : a.avg7 - b.avg7);
 }
 function rowHtml(p, i) {
-  const tip = turnoverTip(p.days, p.stock);
+  const tip = p.noERP ? ["", "库存未匹配"] : turnoverTip(p.days, p.stock);
   return `<tr ondblclick="openDetail('${esc(p.name)}')">
     <td class="cell-index">${i + 1}</td>
     <td>
@@ -1625,9 +1647,9 @@ function rowHtml(p, i) {
     <td>${ringTag(p.ring)}</td>
     <td>${ringTag(p.dayRing)}</td>
     <td class="cell-num highlight">${fmtInt(p.totalSales)}</td>
-    <td><div class="turnover-stack"><div class="turnover-info"><div class="turnover-track"><span class="turnover-fill ${turnoverClass(p.days,p.stock)}" style="width:${Math.max(10, Math.min(100, p.days))}%"></span></div><span class="turnover-day">${fmtInt(p.days)}</span></div><span class="turnover-tip ${tip[0]}">${tip[1]}</span></div></td>
-    <td class="cell-num">${fmtInt(p.available)}</td>
-    <td class="cell-num">${fmtInt(p.transit || 0)}</td>
+    <td><div class="turnover-stack"><div class="turnover-info"><div class="turnover-track"><span class="turnover-fill ${turnoverClass(p.days,p.stock)}" style="width:${p.noERP ? 0 : Math.max(10, Math.min(100, p.days))}%"></span></div><span class="turnover-day">${p.noERP ? "—" : fmtInt(p.days)}</span></div><span class="turnover-tip ${tip[0]}">${tip[1]}</span></div></td>
+    <td class="cell-num">${p.noERP ? "—" : fmtInt(p.available)}</td>
+    <td class="cell-num">${p.noERP ? "—" : fmtInt(p.transit || 0)}</td>
     <td class="cell-money">${fmtMoney(p.overdueAmount)}</td>
     <td>${spark(p.trend)}</td>
   </tr>`;
@@ -1701,8 +1723,8 @@ function calcOverdueSplit(row) {
 }
 
 function buildOverdueData() {
-  const warnRows = RAW.warn || [];
-  const erpRows = RAW.erp || [];
+  const warnRows = analysisRaw().warn || [];
+  const erpRows = analysisRaw().erp || [];
   const erpByName = new Map();
 
   erpRows.forEach(row => {
@@ -1959,26 +1981,30 @@ function renderOverdueBoard() {
   setText("overdueDataStatus", `当前范围：${label}｜按超期金额排序`);
 
   setText("overdueMidCount", fmtInt(k.midCount));
-  setText("overdueMidAmount", `RM ${fmtMoney(k.midAmount)}`);
+  setText("overdueMidAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.midAmount)}`);
   setText("overdueSevereCount", fmtInt(k.severeCount));
-  setText("overdueSevereAmount", `RM ${fmtMoney(k.severeAmount)}`);
+  setText("overdueSevereAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.severeAmount)}`);
   setText("overdueAbsorbAmount", fmtMoney(k.absorbAmount));
   setText("overdueNoSaleCount", fmtInt(k.noSaleCount));
-  setText("overdueNoSaleAmount", `RM ${fmtMoney(k.noSaleAmount)}`);
+  setText("overdueNoSaleAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.noSaleAmount)}`);
 
   setText("overdueProductCount", fmtInt(k.totalCount));
-  setText("overdueProductAmount", `RM ${fmtMoney(k.totalAmount)}`);
+  setText("overdueProductAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.totalAmount)}`);
   setText("overdueHighAmountCount", fmtInt(k.highAmountCount));
-  setText("overdueHighAmountSum", `RM ${fmtMoney(k.highAmountSum)}`);
+  setText("overdueHighAmountSum", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.highAmountSum)}`);
   setText("overdueProjectedCount", fmtInt(k.projectedCount));
-  setText("overdueProjectedAmount", `RM ${fmtMoney(k.projectedAmount)}`);
+  setText("overdueProjectedAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.projectedAmount)}`);
   setText("overdueAbsorbAmountRisk", fmtMoney(k.absorbAmount));
   setText("overdueInboundCount", fmtInt(k.inboundCount));
-  setText("overdueInboundAmount", `RM ${fmtMoney(k.inboundAmount)}`);
+  setText("overdueInboundAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.inboundAmount)}`);
   setText("overdueAlertCount", fmtInt(k.alertCount));
-  setText("overdueAlertAmount", `RM ${fmtMoney(k.alertAmount)}`);
+  setText("overdueAlertAmount", `${window.dailyCurrency ? window.dailyCurrency() : "RM"} ${fmtMoney(k.alertAmount)}`);
 
   renderOverdueTable();
+  if (!analysisRaw().warn.length) {
+    document.querySelectorAll("#overduePage [id]").forEach(el => { if (/^overdue.*(Amount|Count|Sum|Risk)$/.test(el.id)) el.textContent = "—"; });
+    setText("overdueTotalNote", "当前范围无超期数据，请选择已确认国家");
+  }
 }
 
 function overdueLevelTag(row) {
@@ -2051,11 +2077,11 @@ function renderOverdueTable() {
 }
 
 function buildShopData() {
-  const dailyRows = RAW.daily || [];
-  const erpRows = RAW.erp || [];
-  const warnRows = RAW.warn || [];
+  const dailyRows = analysisRaw().daily || [];
+  const erpRows = analysisRaw().erp || [];
+  const warnRows = analysisRaw().warn || [];
 
-  const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn)));
+  const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn))).sort();
   const dates = dateCols.map(dateLabel);
 
   const shopMap = new Map();
@@ -2176,7 +2202,7 @@ function buildShopData() {
     const avg14 = n >= 14 ? vals.slice(-14).reduce((a,b) => a + b, 0) / 14 : (n ? vals.reduce((a,b) => a + b, 0) / n : 0);
     const avg28 = n >= 28 ? vals.slice(-28).reduce((a,b) => a + b, 0) / 28 : (n ? vals.reduce((a,b) => a + b, 0) / n : 0);
     const avg42 = n >= 42 ? vals.slice(-42).reduce((a,b) => a + b, 0) / 42 : (n ? vals.reduce((a,b) => a + b, 0) / n : 0);
-    const ring = avg14 > 0 ? (last7Avg - avg14) / avg14 * 100 : null;
+    const ring = n >= 14 && baseAvg > 0 ? (last7Avg - baseAvg) / baseAvg * 100 : null;
 
     return {
       shop: item.shop,
@@ -2220,6 +2246,7 @@ function buildShopData() {
 }
 
 function shopScopeText() {
+  if (window.dailyScope && window.dailyScope.shop !== "__ALL__") return window.dailyScope.shop;
   return selectedShop === "__ALL__" ? "全部店铺" : selectedShop;
 }
 
@@ -2260,7 +2287,7 @@ function setRiskCard(id, value, unit, note) {
 
 function buildErpProductMapForShop() {
   const map = new Map();
-  (RAW.erp || []).forEach(row => {
+  (analysisRaw().erp || []).forEach(row => {
     const sku = cleanStr(getField(row, ["库存SKU编号"]));
     if (!sku || EXCLUDED_SKUS.has(sku)) return;
     const name = cleanStr(getField(row, ["中文名称", "SKU中文名", "商品名称"]));
@@ -2292,7 +2319,7 @@ function buildErpProductMapForShop() {
 
 function buildWarnProductMapForShop() {
   const map = new Map();
-  (RAW.warn || []).forEach(row => {
+  (analysisRaw().warn || []).forEach(row => {
     const name = cleanStr(getField(row, ["商品名称", "中文名称", "SKU中文名"], ""));
     if (!name) return;
     map.set(name, (map.get(name) || 0) + toNum(getField(row, ["超期金额"])));
@@ -2301,8 +2328,8 @@ function buildWarnProductMapForShop() {
 }
 
 function buildShopProductRows(scopeShop = selectedShop) {
-  const dailyRows = RAW.daily || [];
-  const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn)));
+  const dailyRows = analysisRaw().daily || [];
+  const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn))).sort();
   const erpMap = buildErpProductMapForShop();
   const warnMap = buildWarnProductMapForShop();
   const productMap = new Map();
@@ -2347,7 +2374,8 @@ function buildShopProductRows(scopeShop = selectedShop) {
     const avg14 = n >= 14 ? vals.slice(-14).reduce((a,b) => a + b, 0) / 14 : baseAvg;
     const avg28 = n >= 28 ? vals.slice(-28).reduce((a,b) => a + b, 0) / 28 : baseAvg;
     const avg42 = n >= 42 ? vals.slice(-42).reduce((a,b) => a + b, 0) / 42 : baseAvg;
-    const ring = avg14 > 0 ? (avg7 - avg14) / avg14 * 100 : null;
+    const prev7Avg = previousWeekAverage(dateCols, vals);
+    const ring = prev7Avg > 0 ? (avg7 - prev7Avg) / prev7Avg * 100 : null;
     const totalSales = vals.reduce((a,b) => a + b, 0);
     const today = n ? vals[n - 1] : 0;
     const yesterday = n >= 2 ? vals[n - 2] : 0;
@@ -2366,6 +2394,7 @@ function buildShopProductRows(scopeShop = selectedShop) {
       avg28,
       avg14,
       avg7,
+      prev7Avg,
       ring,
       dayRing,
       totalSales,
@@ -2387,8 +2416,8 @@ function buildShopProductRows(scopeShop = selectedShop) {
 
 function productTrendChangeCounts(rows) {
   return {
-    up7: rows.filter(p => p.avg7 > p.avg14).length,
-    down7: rows.filter(p => p.avg7 < p.avg14).length,
+    up7: rows.filter(p => p.prev7Avg !== null && p.avg7 > p.prev7Avg).length,
+    down7: rows.filter(p => p.prev7Avg !== null && p.avg7 < p.prev7Avg).length,
     dayUp: rows.filter(p => p.today > p.yesterday).length,
     dayDown: rows.filter(p => p.today < p.yesterday).length
   };
@@ -2397,8 +2426,8 @@ function productTrendChangeCounts(rows) {
 function shopProductPassTrend(p, type) {
   if (!type) return true;
   const pv = shopProductPeriodValue(p, shopPeriod);
-  if (type === "up7") return p.avg7 > p.avg14;
-  if (type === "down7") return p.avg7 < p.avg14;
+  if (type === "up7") return p.prev7Avg !== null && p.avg7 > p.prev7Avg;
+  if (type === "down7") return p.prev7Avg !== null && p.avg7 < p.prev7Avg;
   if (type === "dayUp") return p.today > p.yesterday;
   if (type === "dayDown") return p.today < p.yesterday;
   if (type === "active") return pv > 0;
@@ -2408,7 +2437,7 @@ function shopProductPassTrend(p, type) {
 
 function shopProductPassRisk(p, type) {
   if (!type) return true;
-  if (type === "stockout") return p.stock <= 0;
+  if (type === "stockout") return !p.noERP && p.stock <= 0;
   if (type === "oversell") return p.stock < 0;
   if (type === "lt25") return p.days > 0 && p.days < 25;
   if (type === "50to90") return p.days >= 50 && p.days <= 90;
@@ -2510,7 +2539,7 @@ function renderShopFilters() {
 }
 
 function shopProductRowHtml(p, i) {
-  const tip = turnoverTip(p.days, p.stock);
+  const tip = p.noERP ? ["", "库存未匹配"] : turnoverTip(p.days, p.stock);
   return `<tr ondblclick="openShopProductDetail('${esc(p.name)}')">
     <td class="cell-index">${i + 1}</td>
     <td>
@@ -2529,15 +2558,15 @@ function shopProductRowHtml(p, i) {
       <div class="turnover-stack">
         <div class="turnover-info">
           <div class="turnover-track">
-            <span class="turnover-fill ${turnoverClass(p.days, p.stock)}" style="width:${Math.max(10, Math.min(100, p.days))}%"></span>
+            <span class="turnover-fill ${turnoverClass(p.days, p.stock)}" style="width:${p.noERP ? 0 : Math.max(10, Math.min(100, p.days))}%"></span>
           </div>
-          <span class="turnover-day">${fmtInt(p.days)}</span>
+          <span class="turnover-day">${p.noERP ? "—" : fmtInt(p.days)}</span>
         </div>
         <span class="turnover-tip ${tip[0]}">${tip[1]}</span>
       </div>
     </td>
-    <td class="cell-num">${fmtInt(p.available)}</td>
-    <td class="cell-num">${fmtInt(p.transit || 0)}</td>
+    <td class="cell-num">${p.noERP ? "—" : fmtInt(p.available)}</td>
+    <td class="cell-num">${p.noERP ? "—" : fmtInt(p.transit || 0)}</td>
     <td class="cell-money">${fmtMoney(p.overdueAmount)}</td>
     <td>${shopSpark(p.trend, shopPeriod)}</td>
   </tr>`;
@@ -2582,40 +2611,12 @@ function renderShopTable() {
 function renderShopButtons() {
   const wrap = document.getElementById("shopButtons");
   if (!wrap) return;
-  const shops = SHOP_DATA.shops || [];
-  const buttons = [];
-  shops.forEach(s => {
-    buttons.push(`<button class="shop-btn ${selectedShop === s.shop ? "active" : ""}" type="button" data-shop="${esc(s.shop)}">${esc(s.shop)}<span class="shop-btn-sub">${fmt1(s.last7Avg)} /天</span></button>`);
-  });
-  wrap.innerHTML = buttons.join("");
-  wrap.querySelectorAll(".shop-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedShop = btn.dataset.shop || "__ALL__";
-    
-  ["overdueSearch","overdueCatFilter","overdueClassFilter","overdueAmountFilter","overdueTurnoverFilter","overdueSeverityFilter","overdueAlertFilter"].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const handler = () => {
-      if (id === "overdueCatFilter") renderOverdueFilters();
-      renderOverdueTable();
-    };
-    el.addEventListener("input", handler);
-    el.addEventListener("change", handler);
-  });
-
-  document.querySelectorAll(".overdue-mode-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".overdue-mode-btn").forEach(x => x.classList.remove("active"));
-      btn.classList.add("active");
-      overdueMode = btn.dataset.overdueMode || "current";
-      renderOverdueTable();
-    });
-  });
-
-  ["shopSearch","shopCat1Filter","shopCat2Filter","shopProductFilter","shopTrendFilter","shopRiskFilter"].forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
-      renderShopBoard();
-    });
-  });
+  wrap.innerHTML = `<label>选择店铺<select id="compactShopSelect" class="filter-control"><option value="__ALL__">全部店铺</option>${(SHOP_DATA.shops || []).map(s => `<option value="${esc(s.shop)}" ${selectedShop === s.shop ? "selected" : ""}>${esc(s.shop)} · ${fmt1(s.last7Avg)} 件/天</option>`).join("")}</select></label>`;
+  document.getElementById("compactShopSelect").onchange = e => {
+    window.dailyScope.shop = e.target.value;
+    selectedShop = "__ALL__";
+    window.refreshDailyScope();
+  };
 }
 
 function renderShopBoard() {
@@ -2634,7 +2635,7 @@ function renderShopBoard() {
 
   const scopeProductRows = buildShopProductRows(selectedShop);
   const changeCounts = productTrendChangeCounts(scopeProductRows);
-  const compareLabel = "商品维度：7天日销 vs 14天日销";
+  const compareLabel = "商品维度：最近7天 vs 前7天（需满14天）";
 
   document.getElementById("shop7Up").textContent = changeCounts.up7;
   document.getElementById("shop7Down").textContent = changeCounts.down7;
@@ -2651,7 +2652,7 @@ function renderShopBoard() {
     setRiskCard("shopRiskLt25", countStoresWithRisk(selected, "lt25Skus"), "店铺", `涉及 ${sumRiskSkus(selected, "lt25Skus")} SKU`);
     setRiskCard("shopRisk50to90", countStoresWithRisk(selected, "d50to90Skus"), "店铺", `涉及 ${sumRiskSkus(selected, "d50to90Skus")} SKU`);
     setRiskCard("shopRiskGt90", countStoresWithRisk(selected, "gt90Skus"), "店铺", `涉及 ${sumRiskSkus(selected, "gt90Skus")} SKU`);
-    setRiskCard("shopRiskOverdue", formatMoneyCompact(sumOverdueAmount(selected)), "RM", "店铺风险暴露金额");
+    setRiskCard("shopRiskOverdue", formatMoneyCompact(scopeProductRows.reduce((sum,p) => sum + p.overdueAmount, 0)), "RM", "商品去重超期金额");
   } else {
     const s = selected[0];
     if (!s) {
@@ -2668,6 +2669,7 @@ function renderShopBoard() {
   }
   renderShopFilters();
   renderShopTable();
+  if (window.renderDailyVisuals) window.renderDailyVisuals(analysisRaw());
 }
 
 function switchTemplate(template) {
@@ -2690,6 +2692,7 @@ function switchTemplate(template) {
   if (template === "overdue") { renderOverdueBoard(); renderOverdueTable(); }}
 
 function rerenderAll() {
+  if (typeof window !== "undefined" && window.renderDailyScope) window.renderDailyScope(RAW);
   buildDashboardData();
   updateHeaderStatus();
   renderKpis();
@@ -2899,12 +2902,13 @@ function buildShopProductDetail(productName, scopeShop = selectedShop) {
   const shopeeShare = erpAvg7 > 0 ? Math.max(0, 100 - tiktokShare) : 0;
   const scopeLabel = scopeShop === "__ALL__" ? "全部店铺" : scopeShop;
 
-  const dateCols = unique((RAW.daily || []).flatMap(row => Object.keys(row).filter(isDateColumn)));
+  const dateCols = unique((analysisRaw().daily || []).flatMap(row => Object.keys(row).filter(isDateColumn)));
   const dates = dateCols.map(dateLabel);
   const total = (p.trend || []).reduce((a,b) => a + (+b || 0), 0);
 
   const riskTags = [scopeLabel];
-  if (p.stock <= 0) riskTags.push("断货风险");
+  if (p.noERP) riskTags.push("库存未匹配");
+  else if (p.stock <= 0) riskTags.push("断货风险");
   else if (p.days > 0 && p.days < 25) riskTags.push("25天以下");
   else if (p.days >= 25 && p.days <= 50) riskTags.push("周转合理");
   else if (p.days > 50 && p.days < 90) riskTags.push("周转超期");
@@ -3124,9 +3128,9 @@ function setExportCellStyle(ws, rowIndex, colIndex, style, valueIfMissing = "") 
 
 
 function buildProductDeclineSummaryRows(dateCols) {
-  const dailyRows = RAW.daily || [];
-  const erpRows = RAW.erp || [];
-  const warnRows = RAW.warn || [];
+  const dailyRows = analysisRaw().daily || [];
+  const erpRows = analysisRaw().erp || [];
+  const warnRows = analysisRaw().warn || [];
   const erpByName = new Map();
 
   erpRows.forEach(row => {
@@ -3285,7 +3289,7 @@ function appendProductDeclineSummarySheet(workbook, dateCols, stylePack) {
 }
 
 function buildShopExportRows() {
-  const dailyRows = RAW.daily || [];
+  const dailyRows = analysisRaw().daily || [];
   const dateCols = unique(dailyRows.flatMap(row => Object.keys(row).filter(isDateColumn)))
     .sort((a, b) => String(a).localeCompare(String(b)));
 

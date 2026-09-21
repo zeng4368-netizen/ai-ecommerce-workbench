@@ -2,9 +2,11 @@
   "modules/TikTok_GMVMax广告经营管理看板v45_简约版_离线.html": "5d2f3692a9ba939dd97b7bdb565fc296ed29d4699a4295a89112f642ab4e8255",
   "modules/售后数据.html": "332058d99f4cf3b3e792c61fe5e2b77f8b2ec1f72bf933b79a5027b0098f04cb",
   "modules/广告数据.html": "3dd72fda8505b213e078c85d61e06a42812790de6749b223af936a66d9ea0028",
-  "modules/日销异常1.html": "98665ec0644e07e08ab55eff0937f51c86d01973b9f903ec4fdac9fdf181ba59",
+  "modules/日销异常1.html": "ce7a8729d857b72ba61a9c7edf0f173b82d421cd9843271ab82d4448243ed616",
   "skills/广告板块数据处理-SKILL说明.md": "6857b62ef720e7a30250b2258b7d54c468f836abadae216f90b98f809618701e",
   "skills/GMV-MAX广告数据清晰/SKILL.md": "fec9dcfbbbc0c305d3f2f8d70f3071cf6abbed44333eca4a88978b0148052916",
+  "skills/日销库存数据分析/SKILL.md": "5dfeb6991d084e736adcbc72547a647bdbc7fd90c98727392e5428f9f49ac6bd",
   "skills/GMV-MAX广告数据清晰/references/schema.md": "4bd3906e47425916a19d4aa66a74a3262fbd2932a42b0570fd4feafbabbcf8cd",
-  "skills/GMV-MAX广告数据清晰/scripts/gmv_max_cleaner.py": "eacf9b006b1afc4110185387221153748811ab91dd02bd7844122708b2270819"
+  "skills/GMV-MAX广告数据清晰/scripts/gmv_max_cleaner.py": "eacf9b006b1afc4110185387221153748811ab91dd02bd7844122708b2270819",
+  "skills/日销库存数据分析/references/erp-schema.md": "d74760d79cdad554b49e960678d3469d70eabedb37fb515b96ebb7e21bd6a6e1"
 }

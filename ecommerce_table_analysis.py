@@ -339,7 +339,7 @@ for col in ["预测日销量(个)", "仓位库存", "当前可售天数", "在�
     if col in inv.columns:
         inv[col + "_num"] = clean_num(inv[col])
 
-inv_view_cols = ["库存SKU编号", "中文名称", "商品状态", "活跃度", "销量(7/28/42)", "预测日销量(个)", "仓位库存", "当前可售天数", "可用库存量"]
+inv_view_cols = ["库存SKU编号", "中文名称", "商品状态", "活跃度", *([c for c in ("销量(7)", "销量(28)", "销量(42)") if c in inv.columns] or ["销量(7/28/42)"]), "预测日销量(个)", "仓位库存", "当前可售天数", "可用库存量"]
 show("INV_TOP_STOCK_DAYS", inv.sort_values("当前可售天数_num", ascending=False)[inv_view_cols], 20)
 normal_mask = inv["商品状态"].astype(str).str.contains("正常", na=False)
 show("INV_LOW_STOCK_ACTIVE", inv[normal_mask & inv["当前可售天数_num"].notna()].sort_values("当前可售天数_num")[inv_view_cols], 20)

@@ -3,58 +3,61 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#123932">
-  <title>商策 · AI 电商工作台</title>
+  <title>TIKTOK工作台</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%231b6555'/%3E%3Cpath d='M10 28V18h5v10m3 0V10h5v18m3 0V15h5v13' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="assets/workbench.css">
-  <link rel="stylesheet" href="assets/ai.css">
-  <link rel="stylesheet" href="assets/chat.css">
-  <link rel="stylesheet" href="assets/actions.css">
-  <link rel="stylesheet" href="assets/action-detail.css">
-  <link rel="stylesheet" href="assets/data-hub.css">
-  <link rel="stylesheet" href="assets/ziniao-collection.css">
-  <link rel="stylesheet" href="assets/operations.css">
-  <link rel="stylesheet" href="assets/content-studio.css">
-  <script defer src="assets/vendor/echarts.min.js"></script>
-  <script defer src="assets/vendor/xlsx.full.min.js"></script>
-  <script defer src="assets/snapshot.js"></script>
-  <script defer src="assets/analysis.js"></script>
-  <script defer src="assets/evidence.js"></script>
-  <script defer src="assets/question-context.js"></script>
-  <script defer src="assets/report.js"></script>
-  <script defer src="assets/chat.js"></script>
-  <script defer src="assets/chat-actions.js"></script>
-  <script defer src="assets/action-candidates.js"></script>
-  <script defer src="assets/action-center.js"></script>
-  <script defer src="assets/data-hub.js"></script>
-  <script defer src="assets/ziniao-collection.js"></script>
-  <script defer src="assets/hub-actions.js"></script>
-  <script defer src="assets/operations.js"></script>
-  <script defer src="assets/content-studio.js"></script>
-  <script defer src="assets/content-examples.js"></script>
-  <script defer src="assets/workbench.js"></script>
+  <link rel="stylesheet" href="assets/workbench.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/ai.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/chat.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/actions.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/action-detail.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/data-hub.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/ziniao-collection.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/tiktok-patrol.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/operations.css?v=20260917-ui1">
+  <link rel="stylesheet" href="assets/content-studio.css?v=20260917-ui1">
+  <script defer src="assets/vendor/echarts.min.js?v=20260917-ui1"></script>
+  <script defer src="assets/vendor/xlsx.full.min.js?v=20260917-ui1"></script>
+  <script defer src="assets/snapshot.js?v=20260917-ui1"></script>
+  <script defer src="assets/analysis.js?v=20260917-ui1"></script>
+  <script defer src="assets/evidence.js?v=20260917-ui1"></script>
+  <script defer src="assets/question-context.js?v=20260917-ui1"></script>
+  <script defer src="assets/report.js?v=20260917-ui1"></script>
+  <script defer src="assets/chat.js?v=20260917-ui1"></script>
+  <script defer src="assets/chat-actions.js?v=20260917-ui1"></script>
+  <script defer src="assets/action-candidates.js?v=20260917-ui1"></script>
+  <script defer src="assets/action-center.js?v=20260917-ui1"></script>
+  <script defer src="assets/data-hub.js?v=20260919-import-ux1"></script>
+  <script defer src="assets/ziniao-collection.js?v=20260917-ui1"></script>
+  <script defer src="assets/tiktok-patrol.js?v=20260917-ui1"></script>
+  <script defer src="assets/tiktok-patrol-details.js?v=20260917-ui1"></script>
+  <script defer src="assets/tiktok-patrol-live.js?v=20260917-ui1"></script>
+  <script defer src="assets/hub-actions.js?v=20260917-ui1"></script>
+  <script defer src="assets/operations.js?v=20260917-ui1"></script>
+  <script defer src="assets/content-studio.js?v=20260917-ui1"></script>
+  <script defer src="assets/content-examples.js?v=20260917-ui1"></script>
+  <link rel="stylesheet" href="assets/tiktok-ads.css?v=20260917-ui1">
+  <script defer src="assets/tiktok-ads.js?v=20260917-ui1"></script>
+  <script defer src="assets/workbench.js?v=20260917-ui1"></script>
 </head>
 <body>
   <a class="skip" href="#content">跳到工作区</a>
   <aside class="sidebar" id="sidebar">
-    <a href="#overview" class="brand"><span class="brand-icon">商</span><span>商策 <small>COMMERCE INTELLIGENCE</small></span></a>
-    <div class="workspace-label"><span class="avatar">AI</span><span>跨境电商运营空间<small>TikTok Shop · 本地工作台</small></span><span class="dot"></span></div>
+    <a href="#overview" class="brand"><span>TIKTOK工作台</span></a>
     <div class="nav-label">WORKSPACE / 经营工作区</div>
     <nav id="navigation" aria-label="主导航"></nav>
-    <div class="sidebar-bottom"><div class="engine-label"><span class="dot"></span> 规则引擎已就绪 <span class="tag dark">LOCAL</span></div><p>让每个运营动作<br>都有数据依据。</p><button class="sidebar-demo" data-route="portfolio">查看项目与演示路径 <span>↗</span></button><small id="persistence">正在连接本地服务…</small></div>
   </aside>
   <div class="main">
     <header class="topbar">
       <button class="icon-button mobile-menu" id="menuButton" aria-label="打开导航">☰</button>
       <div class="breadcrumb">工作台 <span>/</span> <b id="breadcrumb">经营总览</b></div>
-      <div class="top-actions"><span class="snapshot-badge"><span class="dot"></span> 历史数据演示</span><button id="privacyButton" class="button small" aria-pressed="false">◉ 演示脱敏</button><button id="presentButton" class="button small">▣ 面试演示</button><button class="avatar user" data-route="portfolio" aria-label="项目介绍">AI</button></div>
+      <div class="top-actions"><a class="button small" href="#tiktok-patrol">TikTok 日常巡检</a></div>
     </header>
     <main id="content" tabindex="-1"></main>
     <section id="legacyHost" hidden></section>
-    <footer class="footer"><span>商策 AI WORKBENCH <b>·</b> 数据 → 洞察 → 行动</span><span>独立模块保留原口径 <b>·</b> 新增分析可追溯</span></footer>
+    <footer class="footer"><span>TIKTOK工作台 <b>·</b> 数据 → 洞察 → 行动</span><span>独立模块保留原口径 <b>·</b> 新增分析可追溯</span></footer>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <dialog id="detailDialog"><button class="dialog-close icon-button" aria-label="关闭详情">×</button><div id="dialogContent"></div></dialog>
-  <div id="demoBar" hidden><span><b id="demoStep"></b><small id="demoCaption"></small></span><button class="button small" id="demoPrev">上一步</button><button class="button primary small" id="demoNext">下一步 →</button><button class="icon-button" id="demoClose" aria-label="退出演示">×</button></div>
   <noscript>此工作台需要启用 JavaScript。原始模块仍保存在 modules 目录。</noscript>
 </body>
 </html>

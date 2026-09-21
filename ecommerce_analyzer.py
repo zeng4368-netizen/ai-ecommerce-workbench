@@ -688,12 +688,12 @@ def analyze_files(
         "零金额疑似样品赠品": zero_sku.sort_values("成本占用MYR", ascending=False),
         "到账利润SKU_匹配订单": settled_sku.sort_values("到账利润MYR", ascending=False),
         "高库存长可售天数": inventory.sort_values("当前可售天数_num", ascending=False)[
-            ["库存SKU编号", "中文名称", "商品状态", "活跃度", "销量(7/28/42)", "预测日销量(个)", "仓位库存", "当前可售天数", "可用库存量"]
+            ["库存SKU编号", "中文名称", "商品状态", "活跃度", *([c for c in ("销量(7)", "销量(28)", "销量(42)") if c in inventory.columns] or ["销量(7/28/42)"]), "预测日销量(个)", "仓位库存", "当前可售天数", "可用库存量"]
         ]
         if not inventory.empty
         else empty,
         "正常销售库存紧张": short_inventory.sort_values("当前可售天数_num")[
-            ["库存SKU编号", "中文名称", "商品状态", "活跃度", "销量(7/28/42)", "预测日销量(个)", "仓位库存", "当前可售天数", "可用库存量"]
+            ["库存SKU编号", "中文名称", "商品状态", "活跃度", *([c for c in ("销量(7)", "销量(28)", "销量(42)") if c in inventory.columns] or ["销量(7/28/42)"]), "预测日销量(个)", "仓位库存", "当前可售天数", "可用库存量"]
         ]
         if not short_inventory.empty
         else empty,

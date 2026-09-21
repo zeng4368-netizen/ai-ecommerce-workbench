@@ -14,3 +14,4 @@
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .sidebar{overflow-y:auto}.form-actions{flex-wrap:wrap}
 @media(max-height:850px){.sidebar-bottom p{display:none}.sidebar-bottom{padding-top:16px}.sidebar-demo{margin-top:12px}.sidebar{padding-top:20px}.brand{padding-bottom:20px}.nav-label{padding-top:22px}}
+.nav-group{font-weight:600;color:#d9e5df}.nav-group .nav-chevron{margin-left:auto;font-size:16px;line-height:1;transition:transform .18s}.nav-group[aria-expanded="true"] .nav-chevron{transform:rotate(180deg)}.nav-children[hidden]{display:none}.nav-child{padding-left:31px;font-size:11px}

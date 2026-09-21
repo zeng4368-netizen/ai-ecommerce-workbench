@@ -14,7 +14,7 @@
   try{
    const [cap,list]=await Promise.all([api('/capabilities'),api('/projects')]);if(!valid())return;
    node.innerHTML=`<div class="page-heading"><div><div class="eyebrow">CONTENT STUDIO / 从产品事实到上架素材</div><h1>内容工作室</h1><p>文案 · 双套商品图 · 竞品与市场研究</p></div><a class="button" href="/api/hub/content/policy" target="_blank" rel="noopener">查看原始 V2.0 规则 ↗</a></div>
-    <section class="cs-banner"><div><span class="cs-pill">会话协作测试版 · 付费 API 关闭</span><h2>一款产品，一套有依据的内容。</h2><p>${esc(cap.note)}</p></div><div class="cs-numbers"><b>9<small>独立方图</small></b><b>8<small>独立竖图</small></b><b>0<small>本模块 API 调用</small></b></div></section>
+    <section class="cs-banner"><div><h2>一款产品，一套有依据的内容。</h2><p>${esc(cap.note)}</p></div><div class="cs-numbers"><b>9<small>独立方图</small></b><b>8<small>独立竖图</small></b><b>0<small>本模块 API 调用</small></b></div></section>
     <div class="cs-layout"><aside class="panel cs-projects"><button class="button primary" id="csNew">＋ 新建生成任务</button><button class="button" id="csNewExample">导入已有成品实例</button><h3>本地任务 <small>${list.projects.length}</small></h3>${list.projects.map(p=>`<button class="cs-project ${p.id===selected?'active':''}" data-cs-project="${p.id}"><b>${esc(p.name)}</b><small>${esc(p.state)} · ${p.kind==='example'?'归档 '+p.example_count:'审核 '+p.progress.approved}/${p.progress.total}</small></button>`).join('')||'<p class="cs-muted">还没有产品任务。先填写已知信息，再上传实拍图。</p>'}</aside><div id="csWorkspace"></div></div>`;
    const workspace=node.querySelector('#csWorkspace');
    node.querySelector('#csNew').onclick=()=>{selected='';briefForm();};

@@ -1,369 +1,785 @@
+tiktok_patrol_live:
+  version: tiktok_multistore_readonly_20260914_v2
+  reviewed_store_ids:
+  - '27007200298613'
+  - '27183507534672'
+  - '27144576844226'
+  - '27123379972927'
+  - '26896910699218'
+  - '27120369569623'
+  store_profiles:
+    '27183507534672':
+      expected_identity: OPLO.
+      ads:
+        account_text: 20250115029-3C 数码-JOURNEY.MY-MS0352
+        timezone_text: (UTC+08:00) 中国标准时间
+        timezone: Asia/Shanghai
+    '27144576844226':
+      expected_identity: Tech Pioneer TK
+      ads:
+        account_text: 202608152388-3C数码-MS0319
+        timezone_text: (UTC+08:00) 中国标准时间
+        timezone: Asia/Shanghai
+    '27123379972927':
+      expected_identity: Tech.wealth
+      ads:
+        account_text: 202603262043-3C数码-Tech.wealth-MS0307
+        timezone_text: (UTC+08:00) 中国标准时间
+        timezone: Asia/Shanghai
+    '26896910699218':
+      expected_identity: Tech Junction
+      ads:
+        account_text: 202603262048-3C数码-Tech Junction-MS0186
+        timezone_text: (UTC+08:00) 中国标准时间
+        timezone: Asia/Shanghai
+    '27120369569623':
+      expected_identity: EXPOSE Electronics Thailand
+      allowed_host: seller-th.tiktok.com
+      homepage:
+        url: https://seller-th.tiktok.com/homepage?shop_region=TH
+      sales:
+        url: https://seller-th.tiktok.com/compass/data-overview?shop_region=TH
+        currency: THB
+        money_prefix: ฿
+      ads:
+        account_text: 202608292611-3C数码-BS0573
+        timezone_text: (UTC+08:00) 中国标准时间
+        timezone: Asia/Shanghai
+        url: https://seller-th.tiktok.com/ads-creation/dashboard?origin=SC_ads_tab_button_PC
+  allowed_host: seller-my.tiktok.com
+  identity_selector: span.ub-text-db8f13
+  expected_identity: EXPOSE TK
+  challenge_selector: input[type=password], iframe[src*='captcha'], [id*='captcha'],
+    input[autocomplete=one-time-code]
+  homepage:
+    url: https://seller-my.tiktok.com/homepage?shop_region=MY
+    cards: '[data-tid="homepage.todo.board.single_card"]'
+    health: '[data-tid="homepage.shop.health.status"]'
+    labels:
+    - 待发货
+    - 待退货
+    - 被拒商品
+    - 低库存
+    - 差评
+  sales:
+    url: https://seller-my.tiktok.com/compass/data-overview?shop_region=MY
+    date_open: input[placeholder="开始日期"]
+    yesterday: '[data-testid="time-selector-yesterday"]'
+    yesterday_text: 昨天
+    start: input[placeholder="开始日期"]
+    end: input[placeholder="结束日期"]
+    cards: .pcm-smc
+    label: .pcm-smc-title
+    value: .pcm-smc-value-content
+    change: .pcm-rt-val
+    up: .pcm-rt-icon-up
+    down: .pcm-rt-icon-down
+    labels:
+    - GMV
+    - 商品成交件数
+    - SKU 订单数
+    - 订单数
+    - 客户数
+    - 商品访客数
+    - 商品曝光次数
+    - 去重商品曝光次数
+    date_format: '%Y/%m/%d'
+    currency: MYR
+    money_prefix: RM
+  ads:
+    url: https://seller-my.tiktok.com/ads-creation/dashboard?origin=SC_ads_tab_button_PC
+    account_text: CF-DT-马来3c-MS0237-EXPOSE Flag-泉港大千
+    timezone_text: (UTC+08:00) 马来西亚时间
+    date_open: input[placeholder="开始日期"]
+    yesterday: .theme-arco-picker-shortcuts > button:nth-child(2)
+    yesterday_text: 昨天
+    start: input[placeholder="开始日期"]
+    end: input[placeholder="结束日期"]
+    cards: .overview-item-9jij
+    label: '[class*=overview-item-name]'
+    value: '[class*=overview-item-value]'
+    change: '[class*=overview-item-compare-value]'
+    up: '[class*=overview-item-compare-icon-up]'
+    down: '[class*=overview-item-compare-icon-down]'
+    labels:
+    - 成本
+    - SKU 订单数
+    - 平均下单成本
+    - 总收入
+    - ROI
+    date_format: '%Y-%m-%d'
+    currency: USD
+    money_suffix: USD
 common:
   login_indicators:
-    - "input[type='password']"
-    - "text=/login|sign in|登录|登陆/i"
+  - input[type='password']
+  - text=/login|sign in|登录|登陆/i
   captcha_indicators:
-    - "text=/captcha|验证码|人机验证/i"
-    - "iframe[src*='captcha']"
+  - text=/captcha|验证码|人机验证/i
+  - iframe[src*='captcha']
   two_factor_indicators:
-    - "text=/two-factor|2fa|verification code|二次验证|动态码/i"
+  - text=/two-factor|2fa|verification code|二次验证|动态码/i
   important_step_screenshot: true
-
 ziniao:
-  base_url: "https://example.invalid/ziniao"
+  base_url: https://example.invalid/ziniao
   export_buttons:
-    sales: "text=/导出|Export/i"
+    sales: text=/导出|Export/i
   safe_pages:
-    sales_report: "text=/销售|Sales/i"
-
+    sales_report: text=/销售|Sales/i
 mabang:
-  base_url: "https://example.invalid/mabang"
+  base_url: https://example.invalid/mabang
   export_buttons:
-    orders: "text=/导出|Export/i"
+    orders: text=/导出|Export/i
   safe_pages:
-    order_list: "text=/订单|Orders/i"
-
+    order_list: text=/订单|Orders/i
 leliao:
-  base_url: "https://example.invalid/leliao"
+  base_url: https://example.invalid/leliao
   export_buttons:
-    complaints: "text=/导出|Export/i"
+    complaints: text=/导出|Export/i
   safe_pages:
-    complaint_list: "text=/工单|投诉|Complaints/i"
-
+    complaint_list: text=/工单|投诉|Complaints/i
 ziniao_bill_schemas:
-  english_my: &bill_en_my {"headers":["Order/Adjustment ID","Transaction type","Order created time","Order settled time","Currency","Total settlement amount","Total Revenue","Subtotal after seller discounts","Subtotal before discounts","Seller discounts","Refund subtotal after seller discounts","Refund subtotal before seller discounts","Refund of seller discounts","Total Fees","Transaction fee","TikTok Shop commission fee","Credit card installment - Handling fee","Seller shipping fee","Actual shipping fee","International leg delivery fee","Platform shipping fee discount","Customer shipping fee","Actual return shipping fee","Refunded customer shipping fee","Shipping subsidy","Guarantee program reimbursement","Affiliate Commission","Affiliate partner commission","Affiliate Shop Ads commission","Affiliate commission deposit","Affiliate commission refund","Affiliate Partner shop ads commission","SFP service fee","Bonus cashback service fee","LIVE Specials service fee","Voucher Xtra service fee","EAMS Program service fee","Brands Crazy Deals/Flash Sale service fee","TikTok PayLater program fee","Campaign resource fee","Platform support fee","GMV Max coupon","GMV Max coupon sales tax","Managed service plan (Sales tax)","Managed service plan (Per order fee)","GMV Max ad fee","Guarantee program fee","SFR service fee","","Adjustment amount","Related order ID","Customer payment","Customer refund","Seller co-funded voucher discount","Seller co-funded voucher discount refund","Platform discount","Platform discount refund","Platform co-funded voucher discount","Platform co-funded voucher discount refund","Seller shipping fee discount","Estimated package weight","Chargeable package weight","Details of items sold","Customer's bank for payment"],"sheet":"Order details","date_format":"%Y/%m/%d","unique_key":["transaction_id","transaction_type","settled_at"],"order_link_by_type":"Order","fields":{"transaction_id":"Order/Adjustment ID","transaction_type":"Transaction type","settled_at":"Order settled time","currency":"Currency","settlement":"Total settlement amount","revenue":"Total Revenue","refund":"Refund subtotal after seller discounts","fees":"Total Fees","adjustment":"Adjustment amount","related_order_id":"Related order ID","commission":"TikTok Shop commission fee","transaction_fee":"Transaction fee","shipping_fee":"Seller shipping fee","affiliate_fee":"Affiliate Commission"},"control_sheet":"Reports","control_timezone":"UTC+8","control_labels":{"period":"Time period","timezone":"Time zone","currency":"Currency"},"control_totals":{"settlement":"Total settlement amount","revenue":"Total Revenue","refund":"Refund subtotal after seller discounts","fees":"Total Fees","adjustment":"Adjustments"},"fee_fields":["Transaction fee","TikTok Shop commission fee","Credit card installment - Handling fee","Seller shipping fee","Actual shipping fee","International leg delivery fee","Platform shipping fee discount","Customer shipping fee","Actual return shipping fee","Refunded customer shipping fee","Shipping subsidy","Guarantee program reimbursement","Affiliate Commission","Affiliate partner commission","Affiliate Shop Ads commission","Affiliate commission deposit","Affiliate commission refund","Affiliate Partner shop ads commission","SFP service fee","Bonus cashback service fee","LIVE Specials service fee","Voucher Xtra service fee","EAMS Program service fee","Brands Crazy Deals/Flash Sale service fee","TikTok PayLater program fee","Campaign resource fee","Platform support fee","GMV Max coupon","GMV Max coupon sales tax","Managed service plan (Sales tax)","Managed service plan (Per order fee)","GMV Max ad fee","Guarantee program fee","SFR service fee"]}
-  english_th: &bill_en_th {"headers":["Order/Adjustment ID","Transaction type","Order created time","Order settled time","Currency","Total settlement amount","Total Revenue","Subtotal after seller discounts","Subtotal before discounts","Seller discounts","Refund subtotal after seller discounts","Refund subtotal before seller discounts","Refund of seller discounts","Total Fees","Transaction fee","TikTok Shop commission fee","Credit card installment - Interest rate cost","Seller shipping fee","Actual shipping fee","Platform shipping fee discount","Customer shipping fee","Actual return shipping fee","Refunded customer shipping fee","Shipping subsidy","Exchange shipping fee (passed on to the customer)","Replacement shipping fee (passed on to the customer)","Guarantee program reimbursement","Affiliate Commission","Affiliate commission before PIT (personal income tax)","Personal income tax withheld from affiliate commission","Affiliate partner commission","Affiliate Shop Ads commission","Affiliate Shop Ads commission before PIT","Personal income tax withheld from affiliate Shop Ads commission","Affiliate commission deposit","Affiliate commission refund","Affiliate Partner shop ads commission","SFP service fee","Bonus cashback service fee","LIVE Specials service fee","Voucher Xtra service fee","EAMS Program service fee","Brands Crazy Deals/Flash Sale service fee","TikTok PayLater program fee","Commerce growth fee","Infrastructure fee","Campaign resource fee","Pre-order service fee","GMV Max coupon","GMV Max coupon sales tax","GMV Max ad fee","Guarantee program fee","","Adjustment amount","Related order ID","Customer payment","Customer refund","Seller co-funded voucher discount","Seller co-funded voucher discount refund","Platform discount","Platform discount refund","Platform co-funded voucher discount","Platform co-funded voucher discount refund","Seller shipping fee discount","Estimated package weight","Chargeable package weight","Details of items sold","Customer's bank for payment"],"sheet":"Order details","date_format":"%Y/%m/%d","unique_key":["transaction_id","transaction_type","settled_at"],"order_link_by_type":"Order","fields":{"transaction_id":"Order/Adjustment ID","transaction_type":"Transaction type","settled_at":"Order settled time","currency":"Currency","settlement":"Total settlement amount","revenue":"Total Revenue","refund":"Refund subtotal after seller discounts","fees":"Total Fees","adjustment":"Adjustment amount","related_order_id":"Related order ID","commission":"TikTok Shop commission fee","transaction_fee":"Transaction fee","shipping_fee":"Seller shipping fee","affiliate_fee":"Affiliate Commission"},"control_sheet":"Reports","control_timezone":"UTC+7","control_labels":{"period":"Time period","timezone":"Time zone","currency":"Currency"},"control_totals":{"settlement":"Total settlement amount","revenue":"Total Revenue","refund":"Refund subtotal after seller discounts","fees":"Total Fees","adjustment":"Adjustments"},"fee_fields":["Transaction fee","TikTok Shop commission fee","Credit card installment - Interest rate cost","Seller shipping fee","Actual shipping fee","Platform shipping fee discount","Customer shipping fee","Actual return shipping fee","Refunded customer shipping fee","Shipping subsidy","Exchange shipping fee (passed on to the customer)","Replacement shipping fee (passed on to the customer)","Guarantee program reimbursement","Affiliate Commission","Affiliate commission before PIT (personal income tax)","Personal income tax withheld from affiliate commission","Affiliate partner commission","Affiliate Shop Ads commission","Affiliate Shop Ads commission before PIT","Personal income tax withheld from affiliate Shop Ads commission","Affiliate commission deposit","Affiliate commission refund","Affiliate Partner shop ads commission","SFP service fee","Bonus cashback service fee","LIVE Specials service fee","Voucher Xtra service fee","EAMS Program service fee","Brands Crazy Deals/Flash Sale service fee","TikTok PayLater program fee","Commerce growth fee","Infrastructure fee","Campaign resource fee","Pre-order service fee","GMV Max coupon","GMV Max coupon sales tax","GMV Max ad fee","Guarantee program fee"]}
-
+  english_my: &id001
+    headers:
+    - Order/Adjustment ID
+    - Transaction type
+    - Order created time
+    - Order settled time
+    - Currency
+    - Total settlement amount
+    - Total Revenue
+    - Subtotal after seller discounts
+    - Subtotal before discounts
+    - Seller discounts
+    - Refund subtotal after seller discounts
+    - Refund subtotal before seller discounts
+    - Refund of seller discounts
+    - Total Fees
+    - Transaction fee
+    - TikTok Shop commission fee
+    - Credit card installment - Handling fee
+    - Seller shipping fee
+    - Actual shipping fee
+    - International leg delivery fee
+    - Platform shipping fee discount
+    - Customer shipping fee
+    - Actual return shipping fee
+    - Refunded customer shipping fee
+    - Shipping subsidy
+    - Guarantee program reimbursement
+    - Affiliate Commission
+    - Affiliate partner commission
+    - Affiliate Shop Ads commission
+    - Affiliate commission deposit
+    - Affiliate commission refund
+    - Affiliate Partner shop ads commission
+    - SFP service fee
+    - Bonus cashback service fee
+    - LIVE Specials service fee
+    - Voucher Xtra service fee
+    - EAMS Program service fee
+    - Brands Crazy Deals/Flash Sale service fee
+    - TikTok PayLater program fee
+    - Campaign resource fee
+    - Platform support fee
+    - GMV Max coupon
+    - GMV Max coupon sales tax
+    - Managed service plan (Sales tax)
+    - Managed service plan (Per order fee)
+    - GMV Max ad fee
+    - Guarantee program fee
+    - SFR service fee
+    - ''
+    - Adjustment amount
+    - Related order ID
+    - Customer payment
+    - Customer refund
+    - Seller co-funded voucher discount
+    - Seller co-funded voucher discount refund
+    - Platform discount
+    - Platform discount refund
+    - Platform co-funded voucher discount
+    - Platform co-funded voucher discount refund
+    - Seller shipping fee discount
+    - Estimated package weight
+    - Chargeable package weight
+    - Details of items sold
+    - Customer's bank for payment
+    sheet: Order details
+    date_format: '%Y/%m/%d'
+    unique_key:
+    - transaction_id
+    - transaction_type
+    - settled_at
+    order_link_by_type: Order
+    fields:
+      transaction_id: Order/Adjustment ID
+      transaction_type: Transaction type
+      settled_at: Order settled time
+      currency: Currency
+      settlement: Total settlement amount
+      revenue: Total Revenue
+      refund: Refund subtotal after seller discounts
+      fees: Total Fees
+      adjustment: Adjustment amount
+      related_order_id: Related order ID
+      commission: TikTok Shop commission fee
+      transaction_fee: Transaction fee
+      shipping_fee: Seller shipping fee
+      affiliate_fee: Affiliate Commission
+    control_sheet: Reports
+    control_timezone: UTC+8
+    control_labels:
+      period: Time period
+      timezone: Time zone
+      currency: Currency
+    control_totals:
+      settlement: Total settlement amount
+      revenue: Total Revenue
+      refund: Refund subtotal after seller discounts
+      fees: Total Fees
+      adjustment: Adjustments
+    fee_fields:
+    - Transaction fee
+    - TikTok Shop commission fee
+    - Credit card installment - Handling fee
+    - Seller shipping fee
+    - Actual shipping fee
+    - International leg delivery fee
+    - Platform shipping fee discount
+    - Customer shipping fee
+    - Actual return shipping fee
+    - Refunded customer shipping fee
+    - Shipping subsidy
+    - Guarantee program reimbursement
+    - Affiliate Commission
+    - Affiliate partner commission
+    - Affiliate Shop Ads commission
+    - Affiliate commission deposit
+    - Affiliate commission refund
+    - Affiliate Partner shop ads commission
+    - SFP service fee
+    - Bonus cashback service fee
+    - LIVE Specials service fee
+    - Voucher Xtra service fee
+    - EAMS Program service fee
+    - Brands Crazy Deals/Flash Sale service fee
+    - TikTok PayLater program fee
+    - Campaign resource fee
+    - Platform support fee
+    - GMV Max coupon
+    - GMV Max coupon sales tax
+    - Managed service plan (Sales tax)
+    - Managed service plan (Per order fee)
+    - GMV Max ad fee
+    - Guarantee program fee
+    - SFR service fee
+  english_th: &id002
+    headers:
+    - Order/Adjustment ID
+    - Transaction type
+    - Order created time
+    - Order settled time
+    - Currency
+    - Total settlement amount
+    - Total Revenue
+    - Subtotal after seller discounts
+    - Subtotal before discounts
+    - Seller discounts
+    - Refund subtotal after seller discounts
+    - Refund subtotal before seller discounts
+    - Refund of seller discounts
+    - Total Fees
+    - Transaction fee
+    - TikTok Shop commission fee
+    - Credit card installment - Interest rate cost
+    - Seller shipping fee
+    - Actual shipping fee
+    - Platform shipping fee discount
+    - Customer shipping fee
+    - Actual return shipping fee
+    - Refunded customer shipping fee
+    - Shipping subsidy
+    - Exchange shipping fee (passed on to the customer)
+    - Replacement shipping fee (passed on to the customer)
+    - Guarantee program reimbursement
+    - Affiliate Commission
+    - Affiliate commission before PIT (personal income tax)
+    - Personal income tax withheld from affiliate commission
+    - Affiliate partner commission
+    - Affiliate Shop Ads commission
+    - Affiliate Shop Ads commission before PIT
+    - Personal income tax withheld from affiliate Shop Ads commission
+    - Affiliate commission deposit
+    - Affiliate commission refund
+    - Affiliate Partner shop ads commission
+    - SFP service fee
+    - Bonus cashback service fee
+    - LIVE Specials service fee
+    - Voucher Xtra service fee
+    - EAMS Program service fee
+    - Brands Crazy Deals/Flash Sale service fee
+    - TikTok PayLater program fee
+    - Commerce growth fee
+    - Infrastructure fee
+    - Campaign resource fee
+    - Pre-order service fee
+    - GMV Max coupon
+    - GMV Max coupon sales tax
+    - GMV Max ad fee
+    - Guarantee program fee
+    - ''
+    - Adjustment amount
+    - Related order ID
+    - Customer payment
+    - Customer refund
+    - Seller co-funded voucher discount
+    - Seller co-funded voucher discount refund
+    - Platform discount
+    - Platform discount refund
+    - Platform co-funded voucher discount
+    - Platform co-funded voucher discount refund
+    - Seller shipping fee discount
+    - Estimated package weight
+    - Chargeable package weight
+    - Details of items sold
+    - Customer's bank for payment
+    sheet: Order details
+    date_format: '%Y/%m/%d'
+    unique_key:
+    - transaction_id
+    - transaction_type
+    - settled_at
+    order_link_by_type: Order
+    fields:
+      transaction_id: Order/Adjustment ID
+      transaction_type: Transaction type
+      settled_at: Order settled time
+      currency: Currency
+      settlement: Total settlement amount
+      revenue: Total Revenue
+      refund: Refund subtotal after seller discounts
+      fees: Total Fees
+      adjustment: Adjustment amount
+      related_order_id: Related order ID
+      commission: TikTok Shop commission fee
+      transaction_fee: Transaction fee
+      shipping_fee: Seller shipping fee
+      affiliate_fee: Affiliate Commission
+    control_sheet: Reports
+    control_timezone: UTC+7
+    control_labels:
+      period: Time period
+      timezone: Time zone
+      currency: Currency
+    control_totals:
+      settlement: Total settlement amount
+      revenue: Total Revenue
+      refund: Refund subtotal after seller discounts
+      fees: Total Fees
+      adjustment: Adjustments
+    fee_fields:
+    - Transaction fee
+    - TikTok Shop commission fee
+    - Credit card installment - Interest rate cost
+    - Seller shipping fee
+    - Actual shipping fee
+    - Platform shipping fee discount
+    - Customer shipping fee
+    - Actual return shipping fee
+    - Refunded customer shipping fee
+    - Shipping subsidy
+    - Exchange shipping fee (passed on to the customer)
+    - Replacement shipping fee (passed on to the customer)
+    - Guarantee program reimbursement
+    - Affiliate Commission
+    - Affiliate commission before PIT (personal income tax)
+    - Personal income tax withheld from affiliate commission
+    - Affiliate partner commission
+    - Affiliate Shop Ads commission
+    - Affiliate Shop Ads commission before PIT
+    - Personal income tax withheld from affiliate Shop Ads commission
+    - Affiliate commission deposit
+    - Affiliate commission refund
+    - Affiliate Partner shop ads commission
+    - SFP service fee
+    - Bonus cashback service fee
+    - LIVE Specials service fee
+    - Voucher Xtra service fee
+    - EAMS Program service fee
+    - Brands Crazy Deals/Flash Sale service fee
+    - TikTok PayLater program fee
+    - Commerce growth fee
+    - Infrastructure fee
+    - Campaign resource fee
+    - Pre-order service fee
+    - GMV Max coupon
+    - GMV Max coupon sales tax
+    - GMV Max ad fee
+    - Guarantee program fee
 ziniao_stores:
   '27007200298613':
-    shop: 'MS0237-EXPOSE.TK'
+    shop: MS0237-EXPOSE.TK
     currency: MYR
     timezone: Asia/Kuala_Lumpur
     profile: {}
   '27183507534672':
-    shop: 'MS0352-JOURNEY.MY'
+    shop: MS0352-JOURNEY.MY
     currency: MYR
     timezone: Asia/Kuala_Lumpur
     profile:
-      expected_identity: 'OPLO.'
+      expected_identity: OPLO.
       reports:
         settlement:
-          schema: *bill_en_my
+          schema: *id001
           download_text: Download
           calendar:
             header_format: '{month:02d}/{year}'
       reviewed: true
       export_reviewed: true
-      validation_note: '已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入'
+      validation_note: 已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入
   '27144576844226':
-    shop: 'MS0319-EXPOSE & TechPioneer'
+    shop: MS0319-EXPOSE & TechPioneer
     currency: MYR
     timezone: Asia/Kuala_Lumpur
     profile:
-      expected_identity: 'Tech Pioneer TK'
+      expected_identity: Tech Pioneer TK
       reports:
         settlement:
-          schema: *bill_en_my
+          schema: *id001
           download_text: Download
           calendar:
             header_format: '{month:02d}/{year}'
       reviewed: true
       export_reviewed: true
-      validation_note: '已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入'
+      validation_note: 已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入
   '27123379972927':
-    shop: 'MS0307-EXPOSE.Tech Wealth'
+    shop: MS0307-EXPOSE.Tech Wealth
     currency: MYR
     timezone: Asia/Kuala_Lumpur
     profile:
-      expected_identity: 'Tech.wealth'
+      expected_identity: Tech.wealth
       reviewed: true
       export_reviewed: true
-      validation_note: '已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入'
+      validation_note: 已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入
   '27120369569623':
-    shop: 'BS0573-EXPOSE Electronics Thailand'
+    shop: BS0573-EXPOSE Electronics Thailand
     currency: THB
     timezone: Asia/Bangkok
     profile:
-      expected_identity: 'EXPOSE Electronics Thailand'
+      expected_identity: EXPOSE Electronics Thailand
       platform_timezone: Asia/Bangkok
       utc_offset: 7
-      allowed_hosts: ['seller-th.tiktok.com']
+      allowed_hosts:
+      - seller-th.tiktok.com
       reviewed: true
       export_reviewed: true
-      validation_note: '已核对泰国财务页身份及币种；真实首批文件已确认 UTC+7 及独立泰国表头，仍需用户确认导入'
+      validation_note: 已核对泰国财务页身份及币种；真实首批文件已确认 UTC+7 及独立泰国表头，仍需用户确认导入
       reports:
         settlement:
-          url: 'https://seller-th.tiktok.com/finance/transactions?tab=settled_tab&shop_region=TH'
+          url: https://seller-th.tiktok.com/finance/transactions?tab=settled_tab&shop_region=TH
           download_text: Download
           calendar:
             header_format: '{month:02d}/{year}'
-          schema: *bill_en_th
+          schema: *id002
   '26896910699218':
-    shop: 'MS0186-Tech Junction'
+    shop: MS0186-Tech Junction
     currency: MYR
     timezone: Asia/Kuala_Lumpur
     profile:
-      expected_identity: 'Tech Junction'
+      expected_identity: Tech Junction
       reviewed: true
       export_reviewed: true
-      validation_note: '已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入'
-
-# Dedicated collection profile. Do not substitute broad text=/Export/ selectors.
-# Populate only after the actual EXPOSE.TK report pages and sample exports are reviewed.
-ziniao_collection: {
-  "reviewed": true,
-  "validation_note": "2026-09-11 EXPOSE TK 真实 CSV/XLSX 已对账，自动日期准备已验证；首次批次仍需人工审核才能启用定时。",
-  "allowed_hosts": [
-    "seller-my.tiktok.com"
-  ],
-  "identity_selector": "span.ub-text-db8f13",
-  "expected_identity": "EXPOSE TK",
-  "challenge_selector": "input[type=password], iframe[src*='captcha'], [id*='captcha'], input[autocomplete=one-time-code]",
-  "platform_timezone": "Asia/Kuala_Lumpur",
-  "reports": {
-    "orders": {
-      "url": "https://seller-my.tiktok.com/order",
-      "entry_selector": "[data-log_click_for=export_entry]",
-      "export_selector": "[data-log_click_for=export]",
-      "scope_selector": "[role=dialog] label.p-radio-checked:has(input[value='1'])",
-      "history_rows": "[role=dialog] .overflow-hidden > .p-12",
-      "history_name": ":scope > div",
-      "history_index_offset": 2,
-      "download_selector_template": "[role=dialog] .overflow-hidden > .p-12:nth-child({index}) > button",
-      "schema": {
-        "headers": [
-          "Order ID",
-          "Order Status",
-          "Order Substatus",
-          "Cancelation/Return Type",
-          "Normal or Pre-order",
-          "SKU ID",
-          "Seller SKU",
-          "Product Name",
-          "Variation",
-          "Quantity",
-          "Sku Quantity of return",
-          "SKU Unit Original Price",
-          "SKU Subtotal Before Discount",
-          "SKU Platform Discount",
-          "SKU Seller Discount",
-          "SKU Subtotal After Discount",
-          "Shipping Fee After Discount",
-          "Original Shipping Fee",
-          "Shipping Fee Seller Discount",
-          "Shipping Fee Platform Discount",
-          "Payment platform discount",
-          "Taxes",
-          "Order Amount",
-          "Order Refund Amount",
-          "Created Time",
-          "Paid Time",
-          "RTS Time",
-          "Shipped Time",
-          "Delivered Time",
-          "Cancelled Time",
-          "Cancel By",
-          "Cancel Reason",
-          "Fulfillment Type",
-          "Warehouse Name",
-          "Tracking ID",
-          "Delivery Option",
-          "Shipping Provider Name",
-          "Buyer Message",
-          "Buyer Username",
-          "Recipient",
-          "Phone #",
-          "Zipcode",
-          "Country",
-          "State",
-          "Post Town",
-          "Detail Address",
-          "Additional address information",
-          "Payment Method",
-          "Weight(kg)",
-          "Product Category",
-          "Package ID",
-          "Seller Note",
-          "Checked Status",
-          "Checked Marked by",
-          "Order Channel",
-          "Creator Handle"
-        ],
-        "fields": {
-          "order_id": "Order ID",
-          "line_id": "SKU ID",
-          "sku": "Seller SKU",
-          "product": "Product Name",
-          "status": "Order Status",
-          "created_at": "Created Time",
-          "quantity": "Quantity",
-          "returned_quantity": "Sku Quantity of return",
-          "return_type": "Cancelation/Return Type"
-        },
-        "unique_key": [
-          "order_id",
-          "line_id"
-        ],
-        "date_format": "%d/%m/%Y %H:%M:%S",
-        "header_row": 1
-      }
-    },
-    "settlement": {
-      "url": "https://seller-my.tiktok.com/finance/transactions?tab=settled_tab&shop_region=MY",
-      "entry_selector": "button[datatid='finance.action.modules.exports']",
-      "history_entry_selector": "button[data-tid='finance.action.modules.export_history']",
-      "export_selector": ".p-popover-content .p-btn-primary.p-btn-size-default",
-      "cancel_selector": ".p-popover-content button.p-btn-default",
-      "date_open_selector": ".p-popover-content .select-none",
-      "date_confirm_selector": ".p-popover-content .p-btn-primary.p-btn-size-small",
-      "range_selector": ".p-popover-content .select-none",
-      "history_rows": ".p-popover-content .overflow-y-auto > div",
-      "history_name": ".text-neutral-text1",
-      "history_index_offset": 1,
-      "download_selector_template": ".p-popover-content .overflow-y-auto > div:nth-child({index}) button",
-      "calendar": {
-        "panels": ".p-picker-range-wrapper > .p-panel-date",
-        "header": ".p-picker-header-value",
-        "cells": ".p-picker-cell-in-view:not(.p-picker-cell-disabled)",
-        "previous_month": ".p-panel-date:first-child .p-picker-header-icon:has(.arco-icon-left)",
-        "cell_template": ".p-picker-range-wrapper > .p-panel-date:nth-child({panel}) .p-picker-row:nth-child({row}) > .p-picker-cell-in-view:nth-child({col}):not(.p-picker-cell-disabled)"
-      },
-      "schema": {
-        "headers": [
-          "订单ID/调整单ID",
-          "交易类型",
-          "订单创建时间",
-          "订单结算时间",
-          "货币",
-          "结算总金额",
-          "总收入",
-          "享受商家折扣后小计",
-          "享受折扣前小计",
-          "商家折扣",
-          "享受商家折扣后的退款小计",
-          "享受商家折扣前的退款小计",
-          "商家折扣退款",
-          "总费用",
-          "交易手续费",
-          "TikTok Shop 佣金费",
-          "信用卡分期付款 - 手续费",
-          "商家运费",
-          "实际运费",
-          "国际段运费",
-          "平台运费减免",
-          "买家支付运费",
-          "实际退货运费",
-          "客户运费退款",
-          "运费补贴",
-          "Guarantee program reimbursement",
-          "联盟佣金",
-          "联盟服务商佣金",
-          "联盟店铺广告佣金",
-          "联盟佣金保证金",
-          "联盟佣金退款",
-          "联盟服务商店铺广告佣金",
-          "SFP 服务费",
-          "奖金返现服务费",
-          "直播特别活动服务费",
-          "超级优惠券服务费",
-          "EAMS 计划服务费",
-          "品牌疯狂优惠/秒杀服务费",
-          "TikTok PayLater 计划费用",
-          "活动资源费",
-          "平台支持费",
-          "GMV Max 优惠券",
-          "GMV Max 优惠券销售税",
-          "托管服务计划（销售税）",
-          "托管服务计划（每单费用）",
-          "GMV Max 广告费",
-          "Guarantee program fee",
-          "SFR service fee",
-          "",
-          "调整金额",
-          "相关订单 ID",
-          "客户付款",
-          "客户退款",
-          "商家共同赞助优惠券折扣",
-          "商家共同赞助优惠券折扣退款",
-          "平台折扣",
-          "平台折扣退款",
-          "平台共同赞助优惠券折扣",
-          "平台共同赞助优惠券折扣退款",
-          "商家运费折扣",
-          "预估包裹重量",
-          "计费包裹重量",
-          "已售商品详情",
-          "客户付款银行"
-        ],
-        "sheet": "订单详情",
-        "date_format": "%Y/%m/%d",
-        "unique_key": [
-          "transaction_id",
-          "transaction_type",
-          "settled_at"
-        ],
-        "order_link_by_type": "订单",
-        "fields": {
-          "transaction_id": "订单ID/调整单ID",
-          "transaction_type": "交易类型",
-          "settled_at": "订单结算时间",
-          "currency": "货币",
-          "settlement": "结算总金额",
-          "revenue": "总收入",
-          "refund": "享受商家折扣后的退款小计",
-          "fees": "总费用",
-          "adjustment": "调整金额",
-          "related_order_id": "相关订单 ID",
-          "commission": "TikTok Shop 佣金费",
-          "transaction_fee": "交易手续费",
-          "shipping_fee": "商家运费",
-          "affiliate_fee": "联盟佣金"
-        },
-        "control_sheet": "报告",
-        "control_totals": {
-          "settlement": "结算总金额",
-          "revenue": "总收入",
-          "refund": "享受商家折扣后的退款小计",
-          "fees": "总费用",
-          "adjustment": "调整"
-        },
-        "fee_fields": [
-          "交易手续费",
-          "TikTok Shop 佣金费",
-          "信用卡分期付款 - 手续费",
-          "商家运费",
-          "实际运费",
-          "国际段运费",
-          "平台运费减免",
-          "买家支付运费",
-          "实际退货运费",
-          "客户运费退款",
-          "运费补贴",
-          "Guarantee program reimbursement",
-          "联盟佣金",
-          "联盟服务商佣金",
-          "联盟店铺广告佣金",
-          "联盟佣金保证金",
-          "联盟佣金退款",
-          "联盟服务商店铺广告佣金",
-          "SFP 服务费",
-          "奖金返现服务费",
-          "直播特别活动服务费",
-          "超级优惠券服务费",
-          "EAMS 计划服务费",
-          "品牌疯狂优惠/秒杀服务费",
-          "TikTok PayLater 计划费用",
-          "活动资源费",
-          "平台支持费",
-          "GMV Max 优惠券",
-          "GMV Max 优惠券销售税",
-          "托管服务计划（销售税）",
-          "托管服务计划（每单费用）",
-          "GMV Max 广告费",
-          "Guarantee program fee",
-          "SFR service fee"
-        ]
-      }
-    }
-  }
-}
+      validation_note: 已核对环境与财务页身份；真实首批文件表头已核对，校验通过后仍需用户确认导入
+ziniao_collection:
+  reviewed: true
+  validation_note: 2026-09-11 EXPOSE TK 真实 CSV/XLSX 已对账，自动日期准备已验证；首次批次仍需人工审核才能启用定时。
+  allowed_hosts:
+  - seller-my.tiktok.com
+  identity_selector: span.ub-text-db8f13
+  expected_identity: EXPOSE TK
+  challenge_selector: input[type=password], iframe[src*='captcha'], [id*='captcha'],
+    input[autocomplete=one-time-code]
+  platform_timezone: Asia/Kuala_Lumpur
+  reports:
+    orders:
+      url: https://seller-my.tiktok.com/order
+      entry_selector: '[data-log_click_for=export_entry]'
+      export_selector: '[data-log_click_for=export]'
+      scope_selector: '[role=dialog] label.p-radio-checked:has(input[value=''1''])'
+      history_rows: '[role=dialog] .overflow-hidden > .p-12'
+      history_name: :scope > div
+      history_index_offset: 2
+      download_selector_template: '[role=dialog] .overflow-hidden > .p-12:nth-child({index})
+        > button'
+      schema:
+        headers:
+        - Order ID
+        - Order Status
+        - Order Substatus
+        - Cancelation/Return Type
+        - Normal or Pre-order
+        - SKU ID
+        - Seller SKU
+        - Product Name
+        - Variation
+        - Quantity
+        - Sku Quantity of return
+        - SKU Unit Original Price
+        - SKU Subtotal Before Discount
+        - SKU Platform Discount
+        - SKU Seller Discount
+        - SKU Subtotal After Discount
+        - Shipping Fee After Discount
+        - Original Shipping Fee
+        - Shipping Fee Seller Discount
+        - Shipping Fee Platform Discount
+        - Payment platform discount
+        - Taxes
+        - Order Amount
+        - Order Refund Amount
+        - Created Time
+        - Paid Time
+        - RTS Time
+        - Shipped Time
+        - Delivered Time
+        - Cancelled Time
+        - Cancel By
+        - Cancel Reason
+        - Fulfillment Type
+        - Warehouse Name
+        - Tracking ID
+        - Delivery Option
+        - Shipping Provider Name
+        - Buyer Message
+        - Buyer Username
+        - Recipient
+        - 'Phone #'
+        - Zipcode
+        - Country
+        - State
+        - Post Town
+        - Detail Address
+        - Additional address information
+        - Payment Method
+        - Weight(kg)
+        - Product Category
+        - Package ID
+        - Seller Note
+        - Checked Status
+        - Checked Marked by
+        - Order Channel
+        - Creator Handle
+        fields:
+          order_id: Order ID
+          line_id: SKU ID
+          sku: Seller SKU
+          product: Product Name
+          status: Order Status
+          created_at: Created Time
+          quantity: Quantity
+          returned_quantity: Sku Quantity of return
+          return_type: Cancelation/Return Type
+        unique_key:
+        - order_id
+        - line_id
+        date_format: '%d/%m/%Y %H:%M:%S'
+        header_row: 1
+    settlement:
+      url: https://seller-my.tiktok.com/finance/transactions?tab=settled_tab&shop_region=MY
+      entry_selector: button[datatid='finance.action.modules.exports']
+      history_entry_selector: button[data-tid='finance.action.modules.export_history']
+      export_selector: .p-popover-content .p-btn-primary.p-btn-size-default
+      cancel_selector: .p-popover-content button.p-btn-default
+      date_open_selector: .p-popover-content .select-none
+      date_confirm_selector: .p-popover-content .p-btn-primary.p-btn-size-small
+      range_selector: .p-popover-content .select-none
+      history_rows: .p-popover-content .overflow-y-auto > div
+      history_name: .text-neutral-text1
+      history_index_offset: 1
+      download_selector_template: .p-popover-content .overflow-y-auto > div:nth-child({index})
+        button
+      calendar:
+        panels: .p-picker-range-wrapper > .p-panel-date
+        header: .p-picker-header-value
+        cells: .p-picker-cell-in-view:not(.p-picker-cell-disabled)
+        previous_month: .p-panel-date:first-child .p-picker-header-icon:has(.arco-icon-left)
+        cell_template: .p-picker-range-wrapper > .p-panel-date:nth-child({panel})
+          .p-picker-row:nth-child({row}) > .p-picker-cell-in-view:nth-child({col}):not(.p-picker-cell-disabled)
+      schema:
+        headers:
+        - 订单ID/调整单ID
+        - 交易类型
+        - 订单创建时间
+        - 订单结算时间
+        - 货币
+        - 结算总金额
+        - 总收入
+        - 享受商家折扣后小计
+        - 享受折扣前小计
+        - 商家折扣
+        - 享受商家折扣后的退款小计
+        - 享受商家折扣前的退款小计
+        - 商家折扣退款
+        - 总费用
+        - 交易手续费
+        - TikTok Shop 佣金费
+        - 信用卡分期付款 - 手续费
+        - 商家运费
+        - 实际运费
+        - 国际段运费
+        - 平台运费减免
+        - 买家支付运费
+        - 实际退货运费
+        - 客户运费退款
+        - 运费补贴
+        - Guarantee program reimbursement
+        - 联盟佣金
+        - 联盟服务商佣金
+        - 联盟店铺广告佣金
+        - 联盟佣金保证金
+        - 联盟佣金退款
+        - 联盟服务商店铺广告佣金
+        - SFP 服务费
+        - 奖金返现服务费
+        - 直播特别活动服务费
+        - 超级优惠券服务费
+        - EAMS 计划服务费
+        - 品牌疯狂优惠/秒杀服务费
+        - TikTok PayLater 计划费用
+        - 活动资源费
+        - 平台支持费
+        - GMV Max 优惠券
+        - GMV Max 优惠券销售税
+        - 托管服务计划（销售税）
+        - 托管服务计划（每单费用）
+        - GMV Max 广告费
+        - Guarantee program fee
+        - SFR service fee
+        - ''
+        - 调整金额
+        - 相关订单 ID
+        - 客户付款
+        - 客户退款
+        - 商家共同赞助优惠券折扣
+        - 商家共同赞助优惠券折扣退款
+        - 平台折扣
+        - 平台折扣退款
+        - 平台共同赞助优惠券折扣
+        - 平台共同赞助优惠券折扣退款
+        - 商家运费折扣
+        - 预估包裹重量
+        - 计费包裹重量
+        - 已售商品详情
+        - 客户付款银行
+        sheet: 订单详情
+        date_format: '%Y/%m/%d'
+        unique_key:
+        - transaction_id
+        - transaction_type
+        - settled_at
+        order_link_by_type: 订单
+        fields:
+          transaction_id: 订单ID/调整单ID
+          transaction_type: 交易类型
+          settled_at: 订单结算时间
+          currency: 货币
+          settlement: 结算总金额
+          revenue: 总收入
+          refund: 享受商家折扣后的退款小计
+          fees: 总费用
+          adjustment: 调整金额
+          related_order_id: 相关订单 ID
+          commission: TikTok Shop 佣金费
+          transaction_fee: 交易手续费
+          shipping_fee: 商家运费
+          affiliate_fee: 联盟佣金
+        control_sheet: 报告
+        control_totals:
+          settlement: 结算总金额
+          revenue: 总收入
+          refund: 享受商家折扣后的退款小计
+          fees: 总费用
+          adjustment: 调整
+        fee_fields:
+        - 交易手续费
+        - TikTok Shop 佣金费
+        - 信用卡分期付款 - 手续费
+        - 商家运费
+        - 实际运费
+        - 国际段运费
+        - 平台运费减免
+        - 买家支付运费
+        - 实际退货运费
+        - 客户运费退款
+        - 运费补贴
+        - Guarantee program reimbursement
+        - 联盟佣金
+        - 联盟服务商佣金
+        - 联盟店铺广告佣金
+        - 联盟佣金保证金
+        - 联盟佣金退款
+        - 联盟服务商店铺广告佣金
+        - SFP 服务费
+        - 奖金返现服务费
+        - 直播特别活动服务费
+        - 超级优惠券服务费
+        - EAMS 计划服务费
+        - 品牌疯狂优惠/秒杀服务费
+        - TikTok PayLater 计划费用
+        - 活动资源费
+        - 平台支持费
+        - GMV Max 优惠券
+        - GMV Max 优惠券销售税
+        - 托管服务计划（销售税）
+        - 托管服务计划（每单费用）
+        - GMV Max 广告费
+        - Guarantee program fee
+        - SFR service fee
+tiktok_patrol_details:
+  version: 20260915-v1
+  selectors:
+    violation_tab: '[role="tab"]'
+    violation_date: .pulse-filter-box
+    violation_rows: tbody tr
+    detail_close: .core-drawer-close-icon
+    next: .core-pagination-item-next
+    page: .core-pagination-item-active
+    order_next: .p-pagination-item-next
+    order_page: .p-pagination-item-active
+    overdue: '[data-log_click_for="dashboard_tea_label_1003"]'
+    order_expand: .cQaPBJ
+    order_rows: tbody tr
+    review_date: input[placeholder="自"]
+    date_values: input[readonly]
+    review_cards: '[class^=_ratingListItem_]'
+    review_stars: '[class*=_activeStar_]'
+    review_rating: '[class^=_ratingAndReview_]'
+    review_reply: '[class^=_sellerReply_]'
+    review_order: '[class^=_productItemInfoOrderIdText_]'
+    review_product_id: '[class^=_productItemInfoProductId_]'
+    review_product: '[class^=_productItemInfoName_]'
+    review_sku: '[class^=_productItemInfoSku_]'
+    review_user: '[class^=_userNameText_]'
+    return_tab: '[role="tab"]'
+    return_selected: '[role="tab"][aria-selected="true"]'
+    return_products: '[data-ele_text_name="product_title"]'
+    popover: .core-popover-inner-content
+    calendar_panel: .core-panel-date-inner
+    calendar_header: .core-picker-header-value
+    calendar_cell: .core-picker-cell-in-view:not(.core-picker-cell-disabled)
+    calendar_previous: .core-picker-header-icon:has(.arco-icon-left)
+    calendar_next: .core-picker-header-icon:has(.arco-icon-right)
+    wallet_blocks: '[data-testid="amount-info-block"]'
+    wallet_label: .otrade-text-with-tooltip-text
+    wallet_amount: .otrade-pa-amount-info-amount
+    wallet_currency: .otrade-pa-amount-info-currency
+  paths:
+    violations: /health-center?tab=ncp
+    overdue: /order
+    reviews: /product/rating
+    returns: /order/return?from=menu
+  wallet_accounts:
+    '27007200298613':
+      url: https://ads.tiktok.com/i18n/account/payment?aadvid=7305025243574321154
+      account: CF-DT-马来3c-MS0237-EXPOSE Flag-泉港大千
